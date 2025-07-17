@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>login</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="content">
+<div class="navbar flex-row">
+    <div>
+        <ul class="line-menu">
+            <li>Agency</li>
+            <li class="sel"><a href="/">Latest</a></li>
+            <li><a href="/">About</a></li>
+        </ul>
+    </div>
+    <div>
+        <ul class="line-menu">
+            <li><a href="/">robdelacruz</a></li>
+            <li><a href="/">logout</a></li>
+        </ul>
+    </div>
+</div>
+<div class="grid">
+    <div class="panel login">
+        <p class="titlebar">Login</p>
+        <div>
+            <h2 class="heading">Login</h2>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="username">Username</label>
+                    <input id="username" name="username" type="text" size="20" value="">
+                </div>
+                <div class="control">
+                    <label for="password">Password</label>
+                    <input class="invalid" id="password" name="password" type="password" size="20" value="">
+                </div>
+                <p class="error">Invalid username or password</p>
+                <div class="control">
+                    <button class="submit">Login</button>
+                </div>
+            </form>
+            <p>
+                <a href="/">Create New Account</a>
+            </p>
+        </div>
+    </div> <!-- panel -->
+    <div class="panel expenses">
+        <p class="titlebar">Expenses</p>
+        <div>
+            <table>
+                <caption>Expenses</caption>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Record#</th>
+                </tr>
+                <tr>
+                    <td>2025-07-09</td>
+                    <td>starbucks</td>
+                    <td>105.0</td>
+                    <td>coffee</td>
+                    <td>#101</td>
+                </tr>
+                <tr>
+                    <td>2025-07-09</td>
+                    <td>la creperie</td>
+                    <td>321.25</td>
+                    <td>dine_out</td>
+                    <td>#102</td>
+                </tr>
+                <tr>
+                    <td>2025-07-10</td>
+                    <td>savory</td>
+                    <td>1282.0</td>
+                    <td>dine_out</td>
+                    <td>#103</td>
+                </tr>
+                <tr>
+                    <td>2025-07-10</td>
+                    <td>greenwich</td>
+                    <td>1035.0</td>
+                    <td>dine_out</td>
+                    <td>#104</td>
+                </tr>
+                <tr>
+                    <td>2025-07-11</td>
+                    <td>vultr</td>
+                    <td>125.0</td>
+                    <td>utilities</td>
+                    <td>#105</td>
+                </tr>
+            </table>
+        </div>
+    </div> <!-- panel -->
+    <div class="panel textview">
+        <p class="titlebar">Text View</p>
+        <div>
+            <h2 class="heading">Sample Text</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+        </div>
+    </div> <!-- panel -->
+    <div class="panel formentry">
+        <p class="titlebar">Form Entry</p>
+        <div>
+            <h2 class="heading">Enter Info</h2>
+            <form class="entryform">
+                <div class="control">
+                    <label for="firstname">First Name</label>
+                    <input id="firstname" name="firstname" type="text" size="20" value="">
+                </div>
+                <div class="control">
+                    <label for="lastname">Last Name</label>
+                    <input id="lastname" name="lastname" type="text" size="20" value="">
+                </div>
+                <div class="control">
+                    <label for="amount">Amount</label>
+                    <input id="amount" name="amount" size="20" value="">
+                </div>
+                <div class="control">
+                    <button class="submit">Login</button>
+                </div>
+            </form>
+            <p>
+                <a href="/">Create New Account</a>
+            </p>
+        </div>
+    </div> <!-- panel -->
+    <div class="panel moretext">
+        <p class="titlebar">Some more text</p>
+        <div>
+            <h2 class="heading">Short text</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div> <!-- panel -->
+</div> <!-- grid -->
+</div> <!-- content -->
+</body>
+</html>
+

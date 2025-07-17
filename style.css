@@ -1,0 +1,223 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+input, button, select, textarea {
+    font: inherit;
+}
+input, select, textarea {
+    width: 100%;
+    background-color: #eee;
+    padding: 0 0.5rem;
+}
+button {
+    padding: 0.2rem 0.75rem;
+}
+
+:root {
+    --fg1: #000;
+    --fg2: #addb67;
+    --fg3: #ecc48d;
+    --fg-err: #f00;
+    --bg1: #f6f6ef;
+    --bgtitle: #addb67;
+    --fade0: #e2e8f0;
+    --fade1: #a0aec0;
+    --fade2: #4a5568;
+    --lightgreen: #008800;
+    --darkgreen: #005500;
+    --maroon: #630b08;
+    --mellowyellow: #febf2a;
+    --lightgrey: #d0ccc0;
+    --earthgrey: #686a59;
+}
+.m-0 {margin: 0;}
+.m-xs {margin: 0.25rem;}
+.m-sm {margin: 0.5rem;}
+.m-base {margin: 1rem;}
+.m-lg {margin: 1.25rem;}
+.m-xl {margin: 1.5rem;}
+
+html {
+    font: 14px "Verdana", "Geneva", sans-serif;
+    font-family: system-ui;
+    color: 0;
+    background-color: #aaa;
+    background-color: var(--earthgrey);
+    line-height: 1.5;
+}
+body {
+    margin: 1rem auto;
+    padding: 0;
+    min-height: 97vh;
+    width: min(95%, 1400px);
+    background-color: var(--lightgrey);
+}
+p, ul, li, h1, h2, h3, h4, blockquote {
+    margin: 0;
+    padding: 0;
+}
+p {
+    margin: 1rem 0;
+}
+a, a:visited {
+    color: inherit;
+}
+table {
+    border-collapse: collapse;
+}
+caption {
+    text-align: left;
+    font-weight: 700;
+}
+th {
+    background-color: rgba(0,0,0, 0.2);
+}
+th, td {
+    text-align: left;
+    padding: 0.2rem 0.5rem;
+}
+tr:nth-child(2n+1) {
+    background-color: rgba(0,0,0, 0.1);
+}
+.heading {
+    font-size: 1rem;
+}
+.masthead {
+    height: 50px;
+}
+.grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 300px 640px auto;
+    padding: 1rem;
+}
+.login {
+    1grid-column: 1;
+}
+.expenses {
+    1grid-column: 3 / 4;
+}
+.textview {
+    1grid-column: 1 / 3;
+    1grid-row: 2 / 3;
+}
+.formentry {
+    1grid-column: 2 / 3;
+    1grid-row: 1 / 2;
+}
+.moretext {
+}
+.flex-row {
+}
+.panel {
+    /*border: 1px solid #ddd;*/
+    background-color: #fff;
+    box-shadow: 2px 2px #aaa;
+}
+.panel > * {
+    padding: 1rem 1.5rem;
+}
+.navbar {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background-color: var(--darkgreen);
+    color: #fff;
+}
+.navbar a {
+    text-decoration: none;
+}
+.navbar .heading {
+    display: inline;
+    margin-right: 0.5rem;
+}
+.navbar .line-menu {
+    display: inline;
+    margin-right: 0.5rem;
+}
+.titlebar {
+    background-color: var(--lightgreen);
+    color: #fff;
+    margin: 0;
+    padding: 0.2em 2ch;
+    font-weight: 500;
+}
+.titlebar > * {
+    margin: 0;
+    padding: 0;
+}
+.line-menu {
+    list-style-type: none;
+}
+.line-menu li {
+    display: inline;
+}
+.line-menu li:not(:first-child)::before {
+    content: " | ";
+}
+.line-menu li.sel {
+    font-weight: 700;
+    1border-bottom: 1px solid;
+}
+.simpleform .control {
+    margin: 0.5rem 0;
+}
+.simpleform .control label {
+    display: block;
+}
+input:focus, textarea:focus, button:focus {
+    border: 2px solid;
+}
+input.invalid {
+    border: none;
+    outline: 2px solid #aa0000;
+    background-color: #ddd;
+}
+.simpleform .error {
+    margin: 0;
+    font-style: italic;
+    color: #aa0000;
+}
+.simpleform .control button {
+    margin-right: 0.5em;
+    margin-top: 0.5rem;
+}
+.simpleform .control.row {
+    display: flex;
+    flex-direction: row;
+}
+.simpleform .control.row label {
+    margin-right: 0.5em;
+    display: inline;
+}
+.simpleform .control.row [type=checkbox] {
+    margin-right: 0.5em;
+}
+.simpleform select {
+    padding: 0 1em;
+}
+select {
+    padding: 0 0.5em;
+}
+.submit {
+    font-weight: bold;
+}
+
+.entryform {
+    display: grid;
+    gap: 0.5rem;
+}
+.entryform .control {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 12ch auto;
+    margin: 0.2em 0;
+}
+.entryform label {
+    text-align: right;
+}
