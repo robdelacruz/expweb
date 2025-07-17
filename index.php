@@ -49,10 +49,10 @@ function print_page($errno) {
         print_loginpanel($errno);
     else if (strequals($p, "register") || (strequals($action, "register") && $errno != 0))
         print_registerpanel($errno);
-    else if (!$user)
-        print_loginpanel();
+    else if (strequals($p, "addexp") || (strequals($action, "createexp") && $errno != 0))
+        print_newexpense_panel($errno);
     else
-        print_textpanel();
+        print_textpanel($user);
 
     print "</div>";
     print_foot();
@@ -110,7 +110,7 @@ function print_loginpanel($errno=0) {
     <p class="titlebar">Login</p>
     <div>
         <h2 class="heading">Login</h2>
-        <form action="/index.php?action=login" method="POST" class="simpleform" >
+        <form class="simpleform" action="/index.php?action=login" method="POST">
 TEXT;
 
     $username = trim(sgetv($_POST, "username"));
@@ -139,7 +139,7 @@ TEXT;
     }
 
     echo <<<TEXT
-            <div class="control">
+            <div class="btnrow">
                 <button class="submit" type="submit">Login</button>
             </div>
         </form>
@@ -156,7 +156,7 @@ function print_registerpanel($errno=0) {
         <p class="titlebar">Create New User</p>
         <div>
             <h2 class="heading">Create New User</h2>
-            <form action="/index.php?action=register" method="POST" class="simpleform" >
+            <form class="simpleform" action="/index.php?action=register" method="POST">
 TEXT;
 
     $username = trim(sgetv($_POST, "username"));
@@ -197,25 +197,88 @@ TEXT;
     }
 
     echo <<<TEXT
-                <div class="control">
+                <div class="btnrow">
                     <button class="submit" type="submit">Register</button>
                 </div>
             </form>
             <p>
-                <a href="/">Log in to Existing Account</a>
+                <a href="/?p=login">Log in to Existing Account</a>
             </p>
         </div>
     </div> <!-- panel -->
 TEXT;
 }
 
-function print_textpanel() {
+function print_newexpense_panel($errno=0) {
+    $desc = trim(sgetv($_POST, "desc"));
+    $amt = trim(sgetv($_POST, "amount"));
+    $catname = trim(sgetv($_POST, "cat"));
+    $date = trim(sgetv($_POST, "date"));
+    if (strlen($date) == 0)
+        $date = date("Y-m-d");
+
+    echo "<div class=\"panel newexpense\">\n";
+    echo "  <p class=\"titlebar\">New Expense</p>\n";
+    echo "  <div>\n";
+    echo "      <form class=\"entryform\" action=\"createexp\">\n";
+    echo "          <h2 class=\"heading\">Enter Expense Details</h2>\n";
+    echo "          <div class=\"control\">\n";
+    echo "              <label for=\"desc\">Description</label>\n";
+    echo "              <input id=\"desc\" name=\"desc\" type=\"text\" size=\"25\" value=\"$desc\">\n";
+    echo "          </div>\n";
+    echo "          <div class=\"control\">\n";
+    echo "              <label for=\"amt\">Amount</label>\n";
+    echo "              <input id=\"amt\" name=\"amt\" type=\"number\" value=\"$amt\">\n";
+    echo "          </div>\n";
+    echo "          <div class=\"control\">\n";
+    echo "              <label for=\"cat\">Category</label>\n";
+    echo "              <input id=\"cat\" name=\"cat\" type=\"text\" list=\"catlist\" size=\"10\" value=\"$catname\">\n";
+    echo "              <datalist id=\"catlist\">\n";
+    echo "                  <option value=\"coffee\">\n";
+    echo "              </datalist>\n";
+    echo "          </div>\n";
+    echo "          <div class=\"control\">\n";
+    echo "              <label for=\"date\">Description</label>\n";
+    echo "              <input id=\"date\" name=\"date\" type=\"date\" value=\"$date\">\n";
+    echo "          </div>\n";
+
+    if ($errno != 0) {
+        $errmsg = _strerror($errno);
+        echo "<p class=\"error\">$errmsg</p>\n";
+    }
+
     echo <<<TEXT
-    <div class="panel moretext">
-        <p class="titlebar">Some more text</p>
+                <div class="btnrow">
+                    <button class="submit" type="submit">OK</button>
+                    <button class="submit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div> <!-- panel -->
+TEXT;
+}
+
+function print_textpanel($user) {
+    echo <<<TEXT
+    <div class="panel expenses">
+        <p class="titlebar">Welcome</p>
         <div>
-            <h2 class="heading">Short text</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="menubar">
+                <ul class="line-menu">
+                    <li class="sel"><a href="/" class="sel">Expenses</a></li>
+                    <li><a href="/">Categories</a></li>
+                    <li><a href="/">Year-to-date</a></li>
+                </ul>
+                <ul class="line-menu">
+                    <li><a class="action" href="/?p=addexp">Add Expense</a></li>
+                </ul>
+            </div>
+            <h2 class="heading">Welcome to Expense Buddy</h2>
+            <p>Use Expense Buddy to keep track of your daily expenses.</p>
+TEXT;
+    if (!$user)
+        echo "<p>To start: <a href=\"/?p=login\">Log In</a> or <a href=\"/?p=register\">Create a New Account</a>.</p>";
+    echo <<<TEXT
         </div>
     </div> <!-- panel -->
 TEXT;

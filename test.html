@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="content">
-<div class="navbar flex-row">
+<div class="navbar">
     <div>
         <ul class="line-menu">
             <li>Agency</li>
@@ -27,8 +27,8 @@
     <div class="panel login">
         <p class="titlebar">Login</p>
         <div>
-            <h2 class="heading">Login</h2>
             <form class="simpleform">
+                <h2 class="heading">Login</h2>
                 <div class="control">
                     <label for="username">Username</label>
                     <input id="username" name="username" type="text" size="20" value="">
@@ -38,8 +38,8 @@
                     <input class="invalid" id="password" name="password" type="password" size="20" value="">
                 </div>
                 <p class="error">Invalid username or password</p>
-                <div class="control">
-                    <button class="submit">Login</button>
+                <div class="btnrow">
+                    <button class="submit" type="submit">Login</button>
                 </div>
             </form>
             <p>
@@ -50,8 +50,17 @@
     <div class="panel expenses">
         <p class="titlebar">Expenses</p>
         <div>
-            <table>
-                <caption>Expenses</caption>
+            <div class="menubar">
+                <ul class="line-menu">
+                    <li class="sel"><a href="/" class="sel">Expenses</a></li>
+                    <li><a href="/">Categories</a></li>
+                    <li><a href="/">Year-to-date</a></li>
+                </ul>
+                <ul class="line-menu">
+                    <li><a class="action" href=/">Add Expense</a></li>
+                </ul>
+            </div>
+            <table class="expenses">
                 <tr>
                     <th>Date</th>
                     <th>Description</th>
@@ -64,35 +73,49 @@
                     <td>starbucks</td>
                     <td>105.0</td>
                     <td>coffee</td>
-                    <td>#101</td>
+                    <td><a href="/">#101</a></td>
                 </tr>
                 <tr>
                     <td>2025-07-09</td>
                     <td>la creperie</td>
                     <td>321.25</td>
                     <td>dine_out</td>
-                    <td>#102</td>
+                    <td><a href="/">#102</a></td>
                 </tr>
                 <tr>
                     <td>2025-07-10</td>
                     <td>savory</td>
                     <td>1282.0</td>
                     <td>dine_out</td>
-                    <td>#103</td>
+                    <td><a href="/">#103</a></td>
                 </tr>
                 <tr>
                     <td>2025-07-10</td>
                     <td>greenwich</td>
                     <td>1035.0</td>
                     <td>dine_out</td>
-                    <td>#104</td>
+                    <td><a href="/">#104</a></td>
                 </tr>
                 <tr>
                     <td>2025-07-11</td>
                     <td>vultr</td>
                     <td>125.0</td>
                     <td>utilities</td>
-                    <td>#105</td>
+                    <td><a href="/">#105</a></td>
+                </tr>
+                <tr>
+                    <td>2025-07-15</td>
+                    <td>condominium homeowner association dues</td>
+                    <td>5994.0</td>
+                    <td>assoc_dues</td>
+                    <td><a href="/">#106</a></td>
+                </tr>
+                <tr>
+                    <td>2025-07-15</td>
+                    <td>This is a long description of an expense item, a really long description</td>
+                    <td>5994.0</td>
+                    <td>assoc_dues</td>
+                    <td><a href="/">#107</a></td>
                 </tr>
             </table>
         </div>
@@ -105,30 +128,54 @@
             <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
         </div>
     </div> <!-- panel -->
-    <div class="panel formentry">
-        <p class="titlebar">Form Entry</p>
+    <div class="panel editexpense">
+        <p class="titlebar">Edit Expense</p>
         <div>
-            <h2 class="heading">Enter Info</h2>
             <form class="entryform">
+                <h2 class="heading">Enter Expense Details</h2>
                 <div class="control">
-                    <label for="firstname">First Name</label>
-                    <input id="firstname" name="firstname" type="text" size="20" value="">
-                </div>
-                <div class="control">
-                    <label for="lastname">Last Name</label>
-                    <input id="lastname" name="lastname" type="text" size="20" value="">
+                    <label for="desc">Description</label>
+                    <input class="invalid" id="desc" name="desc" type="text" size="25" value="smurf tv tray">
                 </div>
                 <div class="control">
                     <label for="amount">Amount</label>
-                    <input id="amount" name="amount" size="20" value="">
+                    <input id="amount" name="amount" type="number" value="123.45">
                 </div>
                 <div class="control">
-                    <button class="submit">Login</button>
+                    <label for="cat">Category</label>
+                    <input id="cat" name="cat" type="text" list="catlist" size="10" value="">
+                    <datalist id="catlist">
+                        <option value="coffee"> 
+                        <option value="commute"> 
+                        <option value="dine out"> 
+                        <option value="grocery"> 
+                        <option value="household"> 
+                        <option value="pet food"> 
+                        <option value="utilities"> 
+                    </datalist>
+                </div>
+                <div class="control">
+                    <label for="cat2">Category2</label>
+                    <select class="invalid" id="cat2" name="cat2">
+                        <option value="coffee">coffee</option> 
+                        <option value="commute">commute</option> 
+                        <option value="dine out">dine out</option>
+                        <option value="grocery">grocery</option>
+                        <option value="household">household</option>
+                        <option value="pet food">pet food</option>
+                        <option value="utilities">utilities</option>
+                    </select>
+                </div>
+                <div class="control">
+                    <label for="date">Date</label>
+                    <input class="invalid" id="date" name="date" type="date" value="2025-07-17">
+                </div>
+                <p class="error">An error occurred editing the expense</p>
+                <div class="btnrow">
+                    <button class="submit" type="submit">OK</button>
+                    <button class="submit">Cancel</button>
                 </div>
             </form>
-            <p>
-                <a href="/">Create New Account</a>
-            </p>
         </div>
     </div> <!-- panel -->
     <div class="panel moretext">

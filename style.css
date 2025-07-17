@@ -43,7 +43,7 @@ button {
 html {
     font: 14px "Verdana", "Geneva", sans-serif;
     font-family: system-ui;
-    color: 0;
+    color: #000;
     background-color: #aaa;
     background-color: var(--earthgrey);
     line-height: 1.5;
@@ -95,25 +95,23 @@ tr:nth-child(2n+1) {
     padding: 1rem;
 }
 .login {
-    1grid-column: 1;
 }
 .expenses {
-    1grid-column: 3 / 4;
+    grid-column: 2 / 3;
+}
+.newexpense {
+    grid-column: 2 / 3;
+}
+.editexpense {
+    grid-column: 3 / 4;
 }
 .textview {
-    1grid-column: 1 / 3;
-    1grid-row: 2 / 3;
-}
-.formentry {
-    1grid-column: 2 / 3;
-    1grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
 }
 .moretext {
 }
-.flex-row {
-}
 .panel {
-    /*border: 1px solid #ddd;*/
     background-color: #fff;
     box-shadow: 2px 2px #aaa;
 }
@@ -151,6 +149,16 @@ tr:nth-child(2n+1) {
     margin: 0;
     padding: 0;
 }
+.menubar {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.menubar .line-menu {
+    display: inline;
+    margin-right: 0.5rem;
+}
 .line-menu {
     list-style-type: none;
 }
@@ -161,63 +169,94 @@ tr:nth-child(2n+1) {
     content: " | ";
 }
 .line-menu li.sel {
+}
+.line-menu li.sel a {
+    background-color: var(--earthgrey);
+    background-color: #ccc;
+    color: #000;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    text-decoration: none;
     font-weight: 700;
-    1border-bottom: 1px solid;
+}
+.line-menu .action {
+    color: var(--darkgreen);
+    font-weight: 500;
 }
 .simpleform .control {
     margin: 0.5rem 0;
 }
-.simpleform .control label {
+.simpleform label {
     display: block;
 }
 input:focus, textarea:focus, button:focus {
     border: 2px solid;
 }
-input.invalid {
+.invalid {
     border: none;
     outline: 2px solid #aa0000;
     background-color: #ddd;
-}
-.simpleform .error {
-    margin: 0;
-    font-style: italic;
-    color: #aa0000;
-}
-.simpleform .control button {
-    margin-right: 0.5em;
-    margin-top: 0.5rem;
-}
-.simpleform .control.row {
-    display: flex;
-    flex-direction: row;
-}
-.simpleform .control.row label {
-    margin-right: 0.5em;
-    display: inline;
-}
-.simpleform .control.row [type=checkbox] {
-    margin-right: 0.5em;
-}
-.simpleform select {
-    padding: 0 1em;
 }
 select {
     padding: 0 0.5em;
 }
 .submit {
     font-weight: bold;
+    min-width: 10ch;
+}
+.btnrow {
+    margin-top: 0.5rem;
+}
+.error {
+    margin: 0;
+    font-style: italic;
+    color: #aa0000;
+}
+.simpleform .btnrow {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 .entryform {
     display: grid;
     gap: 0.5rem;
 }
+.entryform .heading {
+    margin-bottom: 0.5rem;
+}
 .entryform .control {
     display: grid;
     gap: 1rem;
-    grid-template-columns: 12ch auto;
-    margin: 0.2em 0;
+    grid-template-columns: 10ch auto;
+    margin: 0.2rem 0;
 }
 .entryform label {
     text-align: right;
+}
+.entryform .btnrow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.entryform .error {
+    text-align: right;
+}
+
+.expenses .line-menu {
+    margin-bottom: 1rem;
+}
+.expenses table {
+}
+.expenses td {
+    white-space: nowrap;
+}
+.expenses td:nth-child(2) {
+    max-width: 25ch;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.expenses td:nth-child(5) {
+    color: var(--darkgreen);
 }
