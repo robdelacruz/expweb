@@ -20,13 +20,13 @@ adduser:
 	gpasswd -a www-data `whoami`
 
 addconf:
-	cp phptest.conf /etc/nginx/sites-available/
-	ln -sf /etc/nginx/sites-available/phptest.conf /etc/nginx/sites-enabled/
+	cp expweb.conf /etc/nginx/sites-available/
+	ln -sf /etc/nginx/sites-available/expweb.conf /etc/nginx/sites-enabled/
 	systemctl restart nginx
 
 delconf:
-	unlink /etc/nginx/sites-enabled/phptest.conf
-	rm -f /etc/nginx/sites-available/phptest.conf
+	unlink /etc/nginx/sites-enabled/expweb.conf
+	rm -f /etc/nginx/sites-available/expweb.conf
 
 # To prevent 401 error:
-# chmod 755 /home/rob, /home/rob/src, /home/rob/src/phptest
+# chmod 755 /home/rob, /home/rob/src, /home/rob/src/expweb
