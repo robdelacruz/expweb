@@ -43,18 +43,18 @@ function print_page($errno) {
 
     print_head();
     print_navbar($user);
-    print "<div class=\"grid\">";
+    print('<div class="grid-2col">');
 
     if (strequals($p, "login") || (strequals($action, "login") && $errno != 0))
         print_loginpanel($errno);
     else if (strequals($p, "register") || (strequals($action, "register") && $errno != 0))
         print_registerpanel($errno);
-    else if (strequals($p, "addexp") || (strequals($action, "createexp") && $errno != 0))
+    else if (strequals($p, "addexp") || (strequals($action, "addexp") && $errno != 0))
         print_newexpense_panel($errno);
     else
         print_textpanel($user);
 
-    print "</div>";
+    print '</div>';
     print_foot();
 }
 function print_head() {
@@ -78,135 +78,111 @@ TEXT;
 }
 
 function print_navbar($user) {
-    echo <<<TEXT
-<div class="navbar">
-    <div>
-        <ul class="line-menu">
-            <li><a href="/">Expense Buddy Web</a></li>
-            <li><a href="/">About</a></li>
-        </ul>
-    </div>
-    <div>
-        <ul class="line-menu">
-TEXT;
+    print('<div class="navbar">');
 
+    print('  <ul class="line-menu">');
+    print('    <li><a href="/">Expense Buddy Web</a></li>');
+    print('    <li><a href="/">About</a></li>');
+    print('  </ul>');
+
+    print('<ul class="line-menu">');
     if (!$user) {
-        echo "<li><a href=\"/\">login</a></li>\n";
+        print('<li><a href="/index.php?p=login">login</a></li>');
     } else {
-        $username = $user["username"];
-        echo "<li><a href=\"/\">$username</a></li>\n";
-        echo "<li><a href=\"/index.php?action=logout\">logout</a></li>\n";
+        printf('<li><a href="/">%s</a></li>', $user["username"]);
+        print('<li><a href="/index.php?action=logout">logout</a></li>');
     }
+    print('</ul>');
 
-    echo <<<TEXT
-        </ul>
-    </div>
-</div>
-TEXT;
+    print('</div>');
 }
 function print_loginpanel($errno=0) {
-    echo <<<TEXT
-<div class="panel login">
-    <p class="titlebar">Login</p>
-    <div>
-        <h2 class="heading">Login</h2>
-        <form class="simpleform" action="/index.php?action=login" method="POST">
-TEXT;
+    print('<div class="panel login-panel">');
+    print('    <p class="titlebar">Login</p>');
+    print('    <div>');
+    print('        <h2 class="heading">Login</h2>');
+    print('        <form class="simpleform" action="/index.php?action=login" method="POST">');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
 
-    echo "<div class=\"control\">\n";
-    echo "<label for=\"username\">Username</label>\n";
+    print('<div class="control">');
+    print('    <label for="username">Username</label>');
     if ($errno == E_INVALID_USERNAMEPWD || $errno == E_USERNAME_REQUIRED) {
-        echo "<input id=\"username\" name=\"username\" type=\"text\" size=\"20\" value=\"$username\" class=\"invalid\">\n";
+        printf('<input id="username" name="username" type="text" size="20" value="%s" class="invalid">', $username);
     } else {
-        echo "<input id=\"username\" name=\"username\" type=\"text\" size=\"20\" value=\"$username\">\n";
+        printf('<input id="username" name="username" type="text" size="20" value="%s">', $username);
     }
-    echo "</div>\n";
+    print('</div>');
 
-    echo "<div class=\"control\">\n";
-    echo "<label for=\"password\">Password</label>\n";
+    print('<div class="control">');
+    print('<label for="password">Password</label>');
     if ($errno == E_INVALID_USERNAMEPWD)
-        echo "<input id=\"password\" name=\"password\" type=\"password\" size=\"20\" value=\"$password\" class=\"invalid\">\n";
+        printf('<input id="password" name="password" type="password" size="20" value="%s" class="invalid">', $password);
     else
-        echo "<input id=\"password\" name=\"password\" type=\"password\" size=\"20\" value=\"$password\">\n";
-    echo "</div>\n";
+        printf('<input id="password" name="password" type="password" size="20" value="%s">', $password);
+    print('</div>');
 
-    if ($errno != 0) {
-        $errmsg = _strerror($errno);
-        echo "<p class=\"error\">{$errmsg}</p>\n";
-    }
+    if ($errno != 0)
+        printf('<p class="error">%s</p>', _strerror($errno));
 
-    echo <<<TEXT
-            <div class="btnrow">
-                <button class="submit" type="submit">Login</button>
-            </div>
-        </form>
-        <p>
-            <a href="/?p=register">Create New Account</a>
-        </p>
-    </div>
-</div> <!-- panel -->
-TEXT;
+    print('<div class="btnrow">');
+    print('    <button class="submit" type="submit">Login</button>');
+    print('</div>');
+    print('</form>');
+    print('<p><a href="/?p=register">Create New Account</a></p>');
+    print('</div>');
+    print('</div> <!-- panel -->');
 }
 function print_registerpanel($errno=0) {
-    echo <<<TEXT
-    <div class="panel">
-        <p class="titlebar">Create New User</p>
-        <div>
-            <h2 class="heading">Create New User</h2>
-            <form class="simpleform" action="/index.php?action=register" method="POST">
-TEXT;
+    print('<div class="panel register-panel">');
+    print('    <p class="titlebar">Create New User</p>');
+    print('    <div>');
+    print('        <h2 class="heading">Create New User</h2>');
+    print('        <form class="simpleform" action="/index.php?action=register" method="POST">');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
     $password2 = sgetv($_POST, "password2");
 
-    echo "<div class=\"control\">\n";
-    echo "<label for=\"username\">Username</label>\n";
+    print('<div class="control">');
+    print('<label for=\"username\">Username</label>');
     if ($errno == E_INVALID_USERNAMEPWD || $errno == E_USERNAME_REQUIRED || $errno == E_USERNAME_EXISTS)
-        echo "<input id=\"username\" name=\"username\" type=\"text\" size=\"20\" value=\"$username\" class=\"invalid\">\n";
+        printf('<input id="username" name="username" type="text" size="20" value="%s" class="invalid">', $username);
     else
-        echo "<input id=\"username\" name=\"username\" type=\"text\" size=\"20\" value=\"$username\">\n";
-    echo "</div>\n";
+        printf('<input id="username" name="username" type="text" size="20" value="%s">', $username);
+    print('</div>');
 
     if ($errno == E_PASSWORD_NOMATCH || $errno == E_INVALID_USERNAMEPWD) {
-        echo "<div class=\"control\">\n";
-        echo "  <label for=\"password\">Password</label>\n";
-        echo "  <input id=\"password\" name=\"password\" type=\"password\" size=\"20\" value=\"$password\" class=\"invalid\">\n";
-        echo "</div>\n";
-        echo "<div class=\"control\">\n";
-        echo "  <label for=\"password2\">Re-enter Password</label>\n";
-        echo "  <input id=\"password2\" name=\"password2\" type=\"password\" size=\"20\" value=\"$password2\" class=\"invalid\">\n";
-        echo "</div>\n";
+        print('<div class="control">');
+        print('  <label for="password">Password</label>');
+        printf('  <input id="password" name="password" type="password" size="20" value="%s" class="invalid">', $password);
+        print('</div>');
+        print('<div class="control">');
+        print('  <label for="password2">Re-enter Password</label>');
+        printf('  <input id="password2" name="password2" type="password" size="20" value="%s" class="invalid">', $password2);
+        print('</div>');
     } else {
-        echo "<div class=\"control\">\n";
-        echo "  <label for=\"password\">Password</label>\n";
-        echo "  <input id=\"password\" name=\"password\" type=\"password\" size=\"20\" value=\"$password\">\n";
-        echo "</div>\n";
-        echo "<div class=\"control\">\n";
-        echo "  <label for=\"password2\">Re-enter Password</label>\n";
-        echo "  <input id=\"password2\" name=\"password2\" type=\"password\" size=\"20\" value=\"$password2\">\n";
-        echo "</div>\n";
+        print('<div class="control">');
+        print('  <label for="password">Password</label>');
+        printf('  <input id="password" name="password" type="password" size="20" value="%s">', $password);
+        print('</div>');
+        print('<div class="control">');
+        print('  <label for="password2">Re-enter Password</label>');
+        printf('  <input id="password2" name="password2" type="password" size="20" value="%s">', $password2);
+        print('</div>');
     }
 
-    if ($errno != 0) {
-        $errmsg = _strerror($errno);
-        echo "<p class=\"error\">$errmsg</p>\n";
-    }
+    if ($errno != 0)
+        printf('<p class="error">%s</p>', _strerror($errno));
 
-    echo <<<TEXT
-                <div class="btnrow">
-                    <button class="submit" type="submit">Register</button>
-                </div>
-            </form>
-            <p>
-                <a href="/?p=login">Log in to Existing Account</a>
-            </p>
-        </div>
-    </div> <!-- panel -->
-TEXT;
+    print('<div class="btnrow">');
+    print('    <button class="submit" type="submit">Register</button>');
+    print('</div>');
+    print('</form>');
+    print('<p><a href="/?p=login">Log in to existing account</a></p>');
+    print('</div>');
+    print('</div> <!-- panel -->');
 }
 
 function print_newexpense_panel($errno=0) {
@@ -217,45 +193,41 @@ function print_newexpense_panel($errno=0) {
     if (strlen($date) == 0)
         $date = date("Y-m-d");
 
-    echo "<div class=\"panel newexpense\">\n";
-    echo "  <p class=\"titlebar\">New Expense</p>\n";
-    echo "  <div>\n";
-    echo "      <form class=\"entryform\" action=\"createexp\">\n";
-    echo "          <h2 class=\"heading\">Enter Expense Details</h2>\n";
-    echo "          <div class=\"control\">\n";
-    echo "              <label for=\"desc\">Description</label>\n";
-    echo "              <input id=\"desc\" name=\"desc\" type=\"text\" size=\"25\" value=\"$desc\">\n";
-    echo "          </div>\n";
-    echo "          <div class=\"control\">\n";
-    echo "              <label for=\"amt\">Amount</label>\n";
-    echo "              <input id=\"amt\" name=\"amt\" type=\"number\" value=\"$amt\">\n";
-    echo "          </div>\n";
-    echo "          <div class=\"control\">\n";
-    echo "              <label for=\"cat\">Category</label>\n";
-    echo "              <input id=\"cat\" name=\"cat\" type=\"text\" list=\"catlist\" size=\"10\" value=\"$catname\">\n";
-    echo "              <datalist id=\"catlist\">\n";
-    echo "                  <option value=\"coffee\">\n";
-    echo "              </datalist>\n";
-    echo "          </div>\n";
-    echo "          <div class=\"control\">\n";
-    echo "              <label for=\"date\">Description</label>\n";
-    echo "              <input id=\"date\" name=\"date\" type=\"date\" value=\"$date\">\n";
-    echo "          </div>\n";
+    print('<div class="panel editexp-panel">');
+    print('  <p class="titlebar">New Expense</p>');
+    print('  <div>');
+    print('      <form class="entryform" action="addexp">');
+    print('          <h2 class="heading">Enter Expense Details</h2>');
+    print('          <div class="control">');
+    print('              <label for="desc">Description</label>');
+    printf('              <input id="desc" name="desc" type="text" size="25" value="%s">', $desc);
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="amt">Amount</label>');
+    printf('              <input id="amt" name="amt" type="number" value="%s">', $amt);
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="cat">Category</label>');
+    printf('              <input id="cat" name="cat" type="text" list="catlist" size="10" value="%s">', $catname);
+    print('              <datalist id="catlist">');
+    print('                  <option value="coffee">');
+    print('              </datalist>');
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="date">Description</label>');
+    printf('              <input id="date" name="date" type="date" value="%s">', $date);
+    print('          </div>');
 
-    if ($errno != 0) {
-        $errmsg = _strerror($errno);
-        echo "<p class=\"error\">$errmsg</p>\n";
-    }
+    if ($errno != 0)
+        printf('<p class="error">%s</p>', _strerror($errno));
 
-    echo <<<TEXT
-                <div class="btnrow">
-                    <button class="submit" type="submit">OK</button>
-                    <button class="submit">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div> <!-- panel -->
-TEXT;
+    print('<div class="btnrow">');
+    print('    <button class="submit" type="submit">OK</button>');
+    print('    <button class="submit">Cancel</button>');
+    print('</div>');
+    print('</form>');
+    print('</div>');
+    print('</div> <!-- panel -->');
 }
 
 function print_textpanel($user) {
@@ -306,6 +278,8 @@ function init_db($dbfile) {
     $db = new SQLite3($dbfile);
     $sql = <<<TEXT
 CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS cat (cat_id INTEGER PRIMARY KEY NOT NULL, name TEXT);
+CREATE TABLE IF NOT EXISTS exp (exp_id INTEGER PRIMARY KEY NOT NULL, date INTEGER, desc TEXT NOT NULL DEFAULT '', amt REAL NOT NULL DEFAULT 0.0, cat_id INTEGER NOT NULL DEFAULT 1);;
 TEXT;
     $db->exec($sql);
     return $db;
@@ -385,3 +359,19 @@ function get_session_user($db) {
         return null;
     return $row;
 }
+
+function add_exp($db, $xp) {
+    $sql = "INSERT INTO exp (date, time, desc, amt, catid) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(1, $xp["date"]);
+    $stmt->bindParam(2, $xp["time"]);
+    $stmt->bindParam(3, $xp["date"]);
+    $stmt->bindParam(4, $xp["amt"]);
+    $stmt->bindParam(5, $xp["catid"]);
+    $stmt->execute();
+    $stmt->close();
+    $expid = $db->lastInsertRowID();
+
+    return 0;
+}
+

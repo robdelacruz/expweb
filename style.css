@@ -88,28 +88,17 @@ tr:nth-child(2n+1) {
 .masthead {
     height: 50px;
 }
-.grid {
+.grid-2col {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 640px auto;
+    padding: 1rem;
+}
+.grid-3col {
     display: grid;
     gap: 1rem;
     grid-template-columns: 300px 640px auto;
     padding: 1rem;
-}
-.login {
-}
-.expenses {
-    grid-column: 2 / 3;
-}
-.newexpense {
-    grid-column: 2 / 3;
-}
-.editexpense {
-    grid-column: 3 / 4;
-}
-.textview {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-}
-.moretext {
 }
 .panel {
     background-color: #fff;
@@ -192,10 +181,13 @@ tr:nth-child(2n+1) {
 input:focus, textarea:focus, button:focus {
     border: 2px solid;
 }
+input:focus, textarea:focus {
+    background-color: lightyellow;
+}
 .invalid {
     border: none;
     outline: 2px solid #aa0000;
-    background-color: #ddd;
+/*    background-color: #ddd;*/
 }
 select {
     padding: 0 0.5em;
@@ -243,10 +235,20 @@ select {
     text-align: right;
 }
 
-.expenses .line-menu {
-    margin-bottom: 1rem;
+.login-panel {
+    width: 250px;
 }
-.expenses table {
+.register-panel {
+    width: 250px;
+}
+.editexp-panel {
+    width: 350px;
+}
+
+.explist-panel {
+}
+.explist-panel .menubar {
+    margin-bottom: 1rem;
 }
 .expenses td {
     white-space: nowrap;
