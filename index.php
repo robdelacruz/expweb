@@ -21,36 +21,65 @@ function _strerror($errno) {
         return "An error occured";
 }
 
-$db = init_db("test.db");
+main();
 
-$errno = 0;
+function main() {
+    $db = init_db("test.db");
 
-$action = getv($_GET, "action");
-if (strequals($action, "login"))
-    $errno = login_user($db, $_POST["username"], $_POST["password"]);
-else if (strequals($action, "register"))
-    $errno = register_user($db, $_POST["username"], $_POST["password"], $_POST["password2"]);
-else if (strequals($action, "logout"))
-    logout_user();
+    $errno = 0;
+    $submit = sgetv($_POST, "submit");
+    $cancel = sgetv($_POST, "cancel");
+    $p = sgetv($_GET, "p");
 
-print_page($errno);
+    if (strequals($p, "logout")) {
+        logout_user();
+        header("Location: /");
+        return;
+    }
+    if (!strequals($submit, "")) {
+        if (strequals($submit, "login")) {
+            $errno = login_user($db, $_POST["username"], $_POST["password"]);
+            if ($errno == 0) {
+                header("Location: /");
+                return;
+            }
+        } else if (strequals($submit, "register")) {
+            $errno = register_user($db, $_POST["username"], $_POST["password"], $_POST["password2"]);
+            if ($errno == 0) {
+                header("Location: /");
+                return;
+            }
+        } else if (strequals($submit, "addexp")) {
+            header("Location: /");
+            return;
+        } else {
+            // unknown submit
+            header("Location: /");
+            return;
+        }
+    }
+    if (!strequals($cancel, "")) {
+        if (strequals($p, "addexp")) {
+            header("Location: /");
+        } else {
+            // unknown cancel
+            header("Location: /");
+        }
+        return;
+    }
 
-function print_page($errno) {
-    global $db;
     $user = get_session_user($db);
-    $p = getv($_GET, "p");
-    $action = getv($_GET, "action");
 
     print_head();
     print_navbar($user);
     print('<div class="grid-2col">');
 
-    if (strequals($p, "login") || (strequals($action, "login") && $errno != 0))
+    if (strequals($p, "login") || (strequals($submit, "login") && $errno != 0))
         print_loginpanel($errno);
-    else if (strequals($p, "register") || (strequals($action, "register") && $errno != 0))
+    else if (strequals($p, "register") || (strequals($submit, "register") && $errno != 0))
         print_registerpanel($errno);
-    else if (strequals($p, "addexp") || (strequals($action, "addexp") && $errno != 0))
-        print_newexpense_panel($errno);
+    else if (strequals($p, "addexp") || (strequals($submit, "addexp") && $errno != 0))
+        print_addexp_panel($errno);
     else
         print_textpanel($user);
 
@@ -58,23 +87,19 @@ function print_page($errno) {
     print_foot();
 }
 function print_head() {
-    echo <<<TEXT
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>login</title>
-<link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-TEXT;
+    print('<!DOCTYPE html>');
+    print('<html>');
+    print('<head>');
+    print('<meta charset="utf-8">');
+    print('<meta name="viewport" content="width=device-width, initial-scale=1">');
+    print('<title>login</title>');
+    print('<link rel="stylesheet" type="text/css" href="style.css">');
+    print('</head>');
+    print('<body>');
 }
 function print_foot() {
-    echo <<<TEXT
-</body>
-</html>
-TEXT;
+    print('</body>');
+    print('</html>');
 }
 
 function print_navbar($user) {
@@ -90,7 +115,7 @@ function print_navbar($user) {
         print('<li><a href="/index.php?p=login">login</a></li>');
     } else {
         printf('<li><a href="/">%s</a></li>', $user["username"]);
-        print('<li><a href="/index.php?action=logout">logout</a></li>');
+        print('<li><a href="/?p=logout">logout</a></li>');
     }
     print('</ul>');
 
@@ -101,7 +126,7 @@ function print_loginpanel($errno=0) {
     print('    <p class="titlebar">Login</p>');
     print('    <div>');
     print('        <h2 class="heading">Login</h2>');
-    print('        <form class="simpleform" action="/index.php?action=login" method="POST">');
+    print('        <form class="simpleform" action="/?p=login" method="POST">');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
@@ -127,7 +152,7 @@ function print_loginpanel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" type="submit">Login</button>');
+    print('    <button class="submit" name="submit" type="submit" value="login">Login</button>');
     print('</div>');
     print('</form>');
     print('<p><a href="/?p=register">Create New Account</a></p>');
@@ -139,7 +164,7 @@ function print_registerpanel($errno=0) {
     print('    <p class="titlebar">Create New User</p>');
     print('    <div>');
     print('        <h2 class="heading">Create New User</h2>');
-    print('        <form class="simpleform" action="/index.php?action=register" method="POST">');
+    print('        <form class="simpleform" action="/?p=register" method="POST">');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
@@ -177,7 +202,7 @@ function print_registerpanel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" type="submit">Register</button>');
+    print('    <button class="submit" name="submit" type="submit" value="register">Register</button>');
     print('</div>');
     print('</form>');
     print('<p><a href="/?p=login">Log in to existing account</a></p>');
@@ -185,7 +210,7 @@ function print_registerpanel($errno=0) {
     print('</div> <!-- panel -->');
 }
 
-function print_newexpense_panel($errno=0) {
+function print_addexp_panel($errno=0) {
     $desc = trim(sgetv($_POST, "desc"));
     $amt = trim(sgetv($_POST, "amount"));
     $catname = trim(sgetv($_POST, "cat"));
@@ -196,7 +221,7 @@ function print_newexpense_panel($errno=0) {
     print('<div class="panel editexp-panel">');
     print('  <p class="titlebar">New Expense</p>');
     print('  <div>');
-    print('      <form class="entryform" action="addexp">');
+    print('      <form class="entryform" action="/?p=addexp" method="POST">');
     print('          <h2 class="heading">Enter Expense Details</h2>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
@@ -222,8 +247,8 @@ function print_newexpense_panel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" type="submit">OK</button>');
-    print('    <button class="submit">Cancel</button>');
+    print('    <button class="submit" name="submit" type="submit" value="addexp">OK</button>');
+    print('    <button class="submit" name="cancel" value="addexp">Cancel</button>');
     print('</div>');
     print('</form>');
     print('</div>');

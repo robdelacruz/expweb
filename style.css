@@ -73,14 +73,14 @@ caption {
     font-weight: 700;
 }
 th {
-    background-color: rgba(0,0,0, 0.2);
+    background-color: #ddd;
 }
 th, td {
     text-align: left;
     padding: 0.2rem 0.5rem;
 }
 tr:nth-child(2n+1) {
-    background-color: rgba(0,0,0, 0.1);
+    background-color: #eee;
 }
 .heading {
     font-size: 1rem;
@@ -127,6 +127,10 @@ tr:nth-child(2n+1) {
     display: inline;
     margin-right: 0.5rem;
 }
+.navbar .line-menu .sel a {
+    background-color: var(--lightgreen);
+    color: #fff;
+}
 .titlebar {
     background-color: var(--lightgreen);
     color: #fff;
@@ -157,15 +161,14 @@ tr:nth-child(2n+1) {
 .line-menu li:not(:first-child)::before {
     content: " | ";
 }
-.line-menu li.sel {
+.line-menu .sel {
 }
-.line-menu li.sel a {
-    background-color: var(--earthgrey);
-    background-color: #ccc;
+.line-menu .sel a {
+    background-color: #ddd;
     color: #000;
     padding: 0.2rem 0.5rem;
     border-radius: 5px;
-    text-decoration: none;
+    /*text-decoration: none;*/
     font-weight: 700;
 }
 .line-menu .action {
@@ -187,7 +190,7 @@ input:focus, textarea:focus {
 .invalid {
     border: none;
     outline: 2px solid #aa0000;
-/*    background-color: #ddd;*/
+    /*background-color: #ddd;*/
 }
 select {
     padding: 0 0.5em;
