@@ -12,26 +12,27 @@ $user = get_user($db, $userid);
 //add_cat($db, $userid, "coffee");
 //add_cat($db, $userid, "commute");
 //add_cat($db, $userid, "dine_out");
-print_cats($db);
 
 //add_exp($db, $userid, ["date" => time(), "desc" => "coffee with moley", "amt" => 1000.50, "catid" => 1]);
 //add_exp($db, $userid, ["date" => time(), "desc" => "surfing usa", "amt" => 12.0, "catid" => 2]);
 //add_exp($db, $userid, ["date" => time(), "desc" => "texas roadhouse", "amt" => 3500.99, "catid" => 3]);
 
+print_users($db);
+print_cats($db);
 print_exps($db);
 
 function print_users($db) {
-    $users = list_users($db);
+    $users = query_users($db);
     printf("Users:\n");
     for ($i=0; $i < count($users); $i++) {
         $user = $users[$i];
-        printf("%d: %s\n", $i, $user["username"]);
+        printf("%d: #%d %s\n", $i, $user["user_id"], $user["username"]);
     }
 }
 function print_cats($db) {
     global $userid;
 
-    $cats = list_cat($db, $userid);
+    $cats = query_cats($db, $userid);
     printf("Categories:\n");
     for ($i=0; $i < count($cats); $i++) {
         $cat = $cats[$i];
@@ -41,7 +42,7 @@ function print_cats($db) {
 function print_exps($db) {
     global $userid;
 
-    $xps = list_exp($db, $userid);
+    $xps = query_exps($db, $userid);
     printf("Expenses:\n");
     for ($i=0; $i < count($xps); $i++) {
         $xp = $xps[$i];
