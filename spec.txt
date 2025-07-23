@@ -1,0 +1,10 @@
+https://superuser.com/questions/646062/granting-write-permissions-to-www-data-group
+
+https://serverfault.com/questions/433265/how-do-i-change-the-nginx-user
+
+expweb directory must be set to same user/group that nginx runs as (www-data).
+To set expweb directory user/group:
+  sudo chown -R www-data:www-data expweb/
+Then you can use chmod 755 to give write access only to members of the group (www-data).
+
+
