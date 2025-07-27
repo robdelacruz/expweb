@@ -45,6 +45,10 @@ function main() {
     $p = sgetv($_GET, "p");
     $user = get_session_user($db);
 
+    $size = sgetv($_GET, "size");
+    if (strlen($size) > 0)
+        _setcookie("size", $size);
+
     if (strequals($p, "logout")) {
         logout_user();
         header("Location: /");
@@ -66,7 +70,6 @@ function main() {
         }
     } else if (strequals($submit, "addexp")) {
         $errno = add_exp($db, $user["user_id"], $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
-        printf("add_exp() errno: %d\n", $errno);
         if ($errno == 0) {
             header("Location: /");
             return;
@@ -90,7 +93,6 @@ function main() {
 start_page:
     print_head();
     print_navbar($user);
-    print('<div class="grid-2col">');
     if (strequals($p, "login"))
         print_login_panel($errno);
     else if (strequals($p, "register"))
@@ -101,16 +103,20 @@ start_page:
         print_addexp_panel($db, $user, $errno);
     else
         print_exp_panel($db, $user);
-    print '</div>';
     print_foot();
 }
 function print_head() {
     print('<!DOCTYPE html>');
-    print('<html>');
+
+    $size = _getcookie("size");
+    if (strequals($size, "mini"))
+        print('<html class="mini">');
+    else
+        print('<html>');
     print('<head>');
     print('<meta charset="utf-8">');
     print('<meta name="viewport" content="width=device-width, initial-scale=1">');
-    print('<title>login</title>');
+    print('<title>Expense Buddy</title>');
     print('<link rel="stylesheet" type="text/css" href="style.css">');
     print('</head>');
     print('<body>');
@@ -122,9 +128,8 @@ function print_foot() {
 
 function print_navbar($user) {
     print('<div class="navbar">');
-
     print('  <ul class="line-menu">');
-    print('    <li><a href="/">Expense Buddy Web</a></li>');
+    print('    <li><a class="pill" href="/">Expense Buddy</a></li>');
     print('    <li><a href="/">About</a></li>');
     print('  </ul>');
 
@@ -148,15 +153,15 @@ function print_welcome_panel() {
             <p>Expense Buddy Web lets you keep track of your daily expenses.</p>
             <p>To start: <a href="/?p=login">Log in</a> or <a href="/?p=register">Create a new account</a></p>
         </div>
-    </div> <!-- panel -->
+    </div>
 TEXT;
 }
 function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');
-    print('    <p class="titlebar">Login</p>');
+    print('    <div class="titlebar">Login</div>');
     print('    <div>');
-    print('        <h2 class="heading">Login</h2>');
     print('        <form class="simpleform" action="/?p=login" method="POST">');
+    print('        <h2 class="heading">Login</h2>');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
@@ -187,14 +192,14 @@ function print_login_panel($errno=0) {
     print('</form>');
     print('<p><a href="/?p=register">Create New Account</a></p>');
     print('</div>');
-    print('</div> <!-- panel -->');
+    print('</div>');
 }
 function print_register_panel($errno=0) {
     print('<div class="panel register-panel">');
-    print('    <p class="titlebar">Create New User</p>');
+    print('    <div class="titlebar">Create New User</div>');
     print('    <div>');
-    print('        <h2 class="heading">Create New User</h2>');
     print('        <form class="simpleform" action="/?p=register" method="POST">');
+    print('        <h2 class="heading">Create New User</h2>');
 
     $username = trim(sgetv($_POST, "username"));
     $password = sgetv($_POST, "password");
@@ -237,7 +242,7 @@ function print_register_panel($errno=0) {
     print('</form>');
     print('<p><a href="/?p=login">Log in to existing account</a></p>');
     print('</div>');
-    print('</div> <!-- panel -->');
+    print('</div>');
 }
 
 function print_addexp_panel($db, $user, $errno=0) {
@@ -251,7 +256,7 @@ function print_addexp_panel($db, $user, $errno=0) {
     $cats = dbquery($db, "SELECT cat_id, name FROM cat WHERE user_id = ? ORDER BY name", $user["user_id"]);
 
     print('<div class="panel editexp-panel">');
-    print('  <p class="titlebar">New Expense</p>');
+    print('  <div class="titlebar">New Expense</div>');
     print('  <div>');
     print('      <form class="entryform" action="/?p=addexp" method="POST">');
     print('          <h2 class="heading">Enter Expense Details</h2>');
@@ -296,7 +301,7 @@ function print_addexp_panel($db, $user, $errno=0) {
     print('</div>');
     print('</form>');
     print('</div>');
-    print('</div> <!-- panel -->');
+    print('</div>');
 }
 
 function print_exp_panel($db, $user) {
@@ -304,19 +309,22 @@ function print_exp_panel($db, $user) {
     $xps = dbquery($db, $sql, $user["user_id"]);
 
     print('<div class="panel explist-panel">');
-    print('<p class="titlebar">Expenses</p>');
+
+    print('<div class="titlebar flex-between">');
+    print('    <form class="menuform">');
+    print('        <select id="expmenu" name="expmenu">');
+    print('            <option value="expenses">Expenses</option>');
+    print('            <option value="categories">Categories</option>');
+    print('            <option value="yeartodate">Year-to-Date</option>');
+    print('        </select>');
+    print('        <input type="submit" value="Go">');
+    print('    </form>');
+    print('    <a href="?p=addexp">Add Expense</a>');
+    print('</div>');
+
     print('<div>');
-    print('    <div class="menubar">');
-    print('        <ul class="line-menu">');
-    print('            <li class="sel"><a href="/" class="sel">Expenses</a></li>');
-    print('            <li><a href="/">Categories</a></li>');
-    print('            <li><a href="/">Year-to-date</a></li>');
-    print('        </ul>');
-    print('        <ul class="line-menu">');
-    print('            <li><a class="action" href="/?p=addexp">Add Expense</a></li>');
-    print('        </ul>');
-    print('    </div>');
     print('    <table class="expenses">');
+    print('        <tbody>');
     print('        <tr>');
     print('            <th>Date</th>');
     print('            <th>Description</th>');
@@ -336,9 +344,11 @@ function print_exp_panel($db, $user) {
         print('</tr>');
     }
 
+    print('</tbody>');
     print('</table>');
     print('</div>');
-    print('</div> <!-- panel -->');
+
+    print('</div>');
 }
 
 function getv($t, $k) {
@@ -353,7 +363,7 @@ function _setcookie($k, $v) {
     $_COOKIE[$k] = $v;
 }
 function _getcookie($k) {
-    return $_COOKIE[$k] && null;
+    return $_COOKIE[$k] ?? null;
 }
 function strequals($s1, $s2) {
     return !strcmp($s1, $s2);
