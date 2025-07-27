@@ -1,0 +1,308 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+input, button, select, textarea {
+    font: inherit;
+}
+input, select, textarea {
+    width: 100%;
+    background-color: #eee;
+    padding: 0 0.5rem;
+}
+button {
+    padding: 0.2rem 0.75rem;
+}
+/* Hide datalist arrow */
+[list]::-webkit-calendar-picker-indicator {
+    display: none !important;
+}
+/* Hide input number spinctrl */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+:root {
+    --fg1: #000;
+    --fg2: #addb67;
+    --fg3: #ecc48d;
+    --fg-err: #f00;
+    --bg1: #f6f6ef;
+    --bgtitle: #addb67;
+    --fade0: #e2e8f0;
+    --fade1: #a0aec0;
+    --fade2: #4a5568;
+    --lightgreen: #008800;
+    --darkgreen: #005500;
+    --maroon: #630b08;
+    --mellowyellow: #febf2a;
+    --lightgrey: #d0ccc0;
+    --earthgrey: #686a59;
+}
+.m-0 {margin: 0;}
+.m-xs {margin: 0.25rem;}
+.m-sm {margin: 0.5rem;}
+.m-base {margin: 1rem;}
+.m-lg {margin: 1.25rem;}
+.m-xl {margin: 1.5rem;}
+
+html {
+    font: 12px "Verdana", "Geneva", sans-serif;
+    font-family: system-ui;
+    color: #000;
+    background-color: #aaa;
+    background-color: var(--earthgrey);
+    line-height: 1.5;
+}
+body {
+    margin: 0;
+    padding: 0;
+    max-width: 400px;
+    background-color: var(--lightgrey);
+}
+p, ul, li, h1, h2, h3, h4, blockquote {
+    margin: 0;
+    padding: 0;
+}
+p {
+    margin: 1rem 0;
+}
+a, a:visited {
+    color: inherit;
+}
+table {
+    border-collapse: collapse;
+}
+caption {
+    text-align: left;
+    font-weight: 700;
+}
+th {
+    background-color: #ddd;
+}
+th, td {
+    text-align: left;
+    padding: 0.2rem 0.5rem;
+}
+tr:nth-child(2n+1) {
+    background-color: #eee;
+}
+.heading {
+    font-size: 1rem;
+}
+.masthead {
+    height: 50px;
+}
+.grid-2col {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 640px auto;
+    padding: 1rem;
+}
+.grid-3col {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 300px 640px auto;
+    padding: 1rem;
+}
+.panel {
+    background-color: #fff;
+    box-shadow: 2px 2px #aaa;
+    overflow-x: auto;
+}
+.panel > * {
+    padding: 0.2rem;
+}
+.navbar {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background-color: var(--darkgreen);
+    color: #fff;
+}
+.navbar a {
+    text-decoration: none;
+}
+.navbar .heading {
+    display: inline;
+    margin-right: 0.5rem;
+}
+.navbar .line-menu {
+    display: inline;
+    margin-right: 0.5rem;
+}
+.navbar .line-menu .sel a {
+    background-color: var(--lightgreen);
+    color: #fff;
+}
+.titlebar {
+    display: flex;
+    gap: 0.2rem;
+    background-color: var(--lightgreen);
+    color: #fff;
+    margin: 0;
+    padding: 0.1rem 0.2rem;
+    font-weight: 500;
+}
+.titlebar > * {
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    font-size: inherit;
+}
+.menubar {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.menubar .line-menu {
+    display: inline;
+    margin-right: 0.5rem;
+}
+.line-menu {
+    list-style-type: none;
+}
+.line-menu li {
+    display: inline;
+}
+.line-menu li:not(:first-child)::before {
+    content: " | ";
+}
+.line-menu .sel {
+}
+.line-menu .sel a {
+    background-color: #ddd;
+    color: #000;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    /*text-decoration: none;*/
+    font-weight: 700;
+}
+.line-menu .action {
+    color: var(--darkgreen);
+    font-weight: 500;
+}
+.simpleform .control {
+    margin: 0.5rem 0;
+}
+.simpleform label {
+    display: block;
+}
+input:focus, textarea:focus, button:focus {
+    border: 2px solid;
+}
+input:focus, textarea:focus {
+    background-color: lightyellow;
+}
+.invalid {
+    border: none;
+    outline: 2px solid #aa0000;
+    /*background-color: #ddd;*/
+}
+select {
+    padding: 0 0.5em;
+}
+.submit {
+    font-weight: bold;
+    min-width: 10ch;
+}
+.btnrow {
+    margin-top: 0.5rem;
+}
+.error {
+    margin: 0;
+    font-style: italic;
+    color: #aa0000;
+}
+.simpleform .btnrow {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.entryform {
+    display: grid;
+    gap: 0.5rem;
+}
+.entryform .heading {
+    margin-bottom: 0.5rem;
+}
+.entryform .control {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 10ch auto;
+    margin: 0.2rem 0;
+}
+.entryform label {
+    text-align: right;
+}
+.entryform .btnrow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.entryform .error {
+    text-align: right;
+}
+
+.login-panel {
+    width: 250px;
+}
+.register-panel {
+    width: 250px;
+}
+.editexp-panel {
+    width: 350px;
+}
+
+.explist-panel {
+    height: 300px;
+}
+.explist-panel .menubar {
+    margin-bottom: 1rem;
+}
+.expenses {
+}
+.expenses th {
+    position: sticky;
+    top: 0;
+}
+.expenses td {
+    white-space: nowrap;
+}
+.expenses td:nth-child(1) {
+    font-size: smaller;
+}
+.expenses td:nth-child(2) {
+    max-width: 25ch;
+    max-width: 15ch;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.expenses td:nth-child(3) {
+    text-align: right;
+}
+.expenses td:nth-child(5) {
+    color: var(--darkgreen);
+}
+.expenses td:nth-child(5) {
+    font-size: smaller;
+    text-align: center;
+}
+/*
+.expenses tr:hover {
+    background-color: var(--mellowyellow);
+    cursor: pointer;
+}
+*/

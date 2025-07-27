@@ -7,4 +7,17 @@ To set expweb directory user/group:
   sudo chown -R www-data:www-data expweb/
 Then you can use chmod 755 to give write access only to members of the group (www-data).
 
-
+To have sticky table headers and scrollable rows:
+.table_container {
+    height: 200px;
+    overflow-y: auto;
+}
+tbody {
+    max-height: 200px;
+    display: block;
+    overflow-y: auto;
+}
+th {
+    position: sticky;
+    top: 0;
+}
