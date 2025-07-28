@@ -203,8 +203,11 @@ function print_login_panel($errno=0) {
     print('<div class="btnrow">');
     print('    <button class="submit" name="submit" type="submit" value="login">Login</button>');
     print('</div>');
-    print('</form>');
+    print('<div class="control">');
     printf('<p><a href="%s">Create New Account</a></p>', siteurl("p=register"));
+    print('</div>');
+
+    print('</form>');
     print('</div>');
     print('</div>');
 }
@@ -253,8 +256,12 @@ function print_register_panel($errno=0) {
     print('<div class="btnrow">');
     print('    <button class="submit" name="submit" type="submit" value="register">Register</button>');
     print('</div>');
-    print('</form>');
+
+    print('<div class="control">');
     printf('<p><a href="%s">Log in to existing account</a></p>', siteurl("p=login"));
+    print('</div>');
+
+    print('</form>');
     print('</div>');
     print('</div>');
 }
@@ -284,9 +291,9 @@ function print_addexp_panel($db, $user, $errno=0) {
     print('          <div class="control">');
     print('              <label for="amt">Amount</label>');
     if ($errno == E_AMT_REQUIRED)
-        printf('<input id="amt" name="amt" type="number" pattern="^\d*(\.\d{0,2})?$" value="%s" class="invalid">', $samt);
+        printf('<input id="amt" name="amt" type="number" step="0.01" value="%s" class="invalid">', $samt);
     else
-        printf('<input id="amt" name="amt" type="number" pattern="^\d*(\.\d{0,2})?$" value="%s">', $samt);
+        printf('<input id="amt" name="amt" type="number" step="0.01" min="0" value="%s">', $samt);
     print('          </div>');
     print('          <div class="control">');
     print('              <label for="cat">Category</label>');

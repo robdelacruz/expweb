@@ -101,6 +101,7 @@ body {
     padding: 0;
     margin: 0.5rem 0.5rem 0;
     box-shadow: 2px 2px #aaa;
+    width: fit-content;
 }
 .mini .panel {
     padding: 0;
@@ -108,7 +109,9 @@ body {
     box-shadow: 2px 2px #aaa;
 }
 .panel > div:nth-child(2) {
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+.mini .panel > div:nth-child(2) {
 }
 table {
     border-collapse: collapse;
@@ -240,6 +243,25 @@ select {
 .entryform .error {
     text-align: right;
 }
+.entryform input[name=desc] {
+    width: 30ch;
+}
+.entryform input[name=amt] {
+    width: 15ch;
+}
+.entryform input[name=cat] {
+    width: 20ch;
+}
+.entryform input[name=date] {
+    width: 16ch;
+}
+
+.simpleform input[name=username] {
+    width: 20ch;
+}
+.simpleform input[type=password] {
+    width: 20ch;
+}
 
 .menuform {
     display: flex;
@@ -255,17 +277,13 @@ select {
 }
 
 .login-panel {
-    width: 250px;
 }
 .register-panel {
-    width: 250px;
 }
 .editexp-panel {
-    width: 350px;
 }
 
 .explist-panel {
-/*    height: 300px;*/
 }
 .explist-panel > div:nth-child(2) {
     padding: 0;
@@ -274,30 +292,45 @@ select {
 }
 .expenses td {
     white-space: nowrap;
-}
-.expenses td:nth-child(1) {
-    font-size: smaller;
-}
-.expenses td:nth-child(2) {
-    max-width: 25ch;
-    max-width: 15ch;
-    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+/* Date */
+.expenses td:nth-child(1) {
+    font-size: smaller;
+}
+/* Desc */
+.expenses td:nth-child(2) {
+    max-width: 30ch;
+}
+.mini .expenses td:nth-child(2) {
+    max-width: 15ch;
+    width: 100%;
+}
+/* Amount */
 .expenses td:nth-child(3) {
     text-align: right;
+    max-width: 15ch;
 }
+.mini .expenses td:nth-child(3) {
+    max-width: 9ch;
+}
+/* Category */
+.expenses td:nth-child(4) {
+    max-width: 25ch;
+}
+.mini .expenses td:nth-child(4) {
+    max-width: 15ch;
+}
+/* Rec# */
 .expenses td:nth-child(5) {
     color: var(--darkgreen);
-}
-.expenses td:nth-child(5) {
     font-size: smaller;
     text-align: center;
 }
-/*
 .expenses tr:hover {
     background-color: var(--mellowyellow);
+    background-color: #77bf2a;
+    background-color: #adff2f;
     cursor: pointer;
 }
-*/
