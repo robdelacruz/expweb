@@ -45,48 +45,45 @@ function main() {
     $p = sgetv($_GET, "p");
     $user = get_session_user($db);
 
-    $size = sgetv($_GET, "size");
-    if (strlen($size) > 0)
-        _setcookie("size", $size);
-
     if (strequals($p, "logout")) {
         logout_user();
-        header("Location: /");
+        header(location_header());
         return;
     }
+#    printf("\$submit: '%s'\n", $submit);
     if (strequals($submit, "")) {
         $errno = 0;
     } else if (strequals($submit, "login")) {
         $errno = login_user($db, trim($_POST["username"]), $_POST["password"]);
         if ($errno == 0) {
-            header("Location: /");
+            header(location_header());
             return;
         }
     } else if (strequals($submit, "register")) {
         $errno = register_user($db, $_POST["username"], $_POST["password"], $_POST["password2"]);
         if ($errno == 0) {
-            header("Location: /");
+            header(location_header());
             return;
         }
     } else if (strequals($submit, "addexp")) {
         $errno = add_exp($db, $user["user_id"], $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
         if ($errno == 0) {
-            header("Location: /");
+            header(location_header());
             return;
         }
     } else {
         // unknown submit
-        header("Location: /");
+        header(location_header());
         return;
     }
 
     if (strequals($cancel, "")) {
     } else if (strequals($p, "addexp")) {
-        header("Location: /");
+        header(location_header());
         return;
     } else {
         // unknown cancel
-        header("Location: /");
+        header(location_header());
         return;
     }
 
@@ -105,14 +102,33 @@ start_page:
         print_exp_panel($db, $user);
     print_foot();
 }
+
+# Return site url.
+# siteurl("p=index&seq=1")
+#   returns "/?p=index&seq=1", "/?view=mini&p=index&seq=1"
+# siteurl() returns "/"
+function siteurl($urlparams="") {
+    $view = sgetv($_GET, "view");
+    if (!$view) {
+        if (!$urlparams)
+            return "/";
+        else
+            return sprintf("/?%s", $urlparams);
+    }
+
+    if (!$urlparams)
+        return sprintf("/?view=%s", $view);
+    else
+        return sprintf("/?view=%s&%s", $view, $urlparams);
+}
+function location_header($urlparams="") {
+    return "Location: " . siteurl($urlparams);
+}
 function print_head() {
     print('<!DOCTYPE html>');
 
-    $size = _getcookie("size");
-    if (strequals($size, "mini"))
-        print('<html class="mini">');
-    else
-        print('<html>');
+    $view = sgetv($_GET, "view");
+    printf('<html class="%s">', $view);
     print('<head>');
     print('<meta charset="utf-8">');
     print('<meta name="viewport" content="width=device-width, initial-scale=1">');
@@ -129,38 +145,36 @@ function print_foot() {
 function print_navbar($user) {
     print('<div class="navbar">');
     print('  <ul class="line-menu">');
-    print('    <li><a class="pill" href="/">Expense Buddy</a></li>');
-    print('    <li><a href="/">About</a></li>');
+    printf('    <li><a class="pill" href="%s">Expense Buddy</a></li>', siteurl());
+    printf('    <li><a href="%s">About</a></li>', siteurl());
     print('  </ul>');
 
     print('<ul class="line-menu">');
     if (!$user) {
-        print('<li><a href="/index.php?p=login">login</a></li>');
+        printf('<li><a href="%s">login</a></li>', siteurl("p=login"));
     } else {
-        printf('<li><a href="/">%s</a></li>', $user["username"]);
-        print('<li><a href="/?p=logout">logout</a></li>');
+        printf('<li><a href="%s">%s</a></li>', siteurl(),  $user["username"]);
+        printf('<li><a href="%s">logout</a></li>', siteurl("p=logout"));
     }
     print('</ul>');
 
     print('</div>');
 }
 function print_welcome_panel() {
-    echo <<<TEXT
-    <div class="panel">
-        <p class="titlebar">Welcome</p>
-        <div>
-            <h2 class="heading">Welcome to Expense Buddy</h2>
-            <p>Expense Buddy Web lets you keep track of your daily expenses.</p>
-            <p>To start: <a href="/?p=login">Log in</a> or <a href="/?p=register">Create a new account</a></p>
-        </div>
-    </div>
-TEXT;
+    print('<div class="panel">');
+    print('    <p class="titlebar">Welcome</p>');
+    print('    <div>');
+    print('        <h2 class="heading">Welcome to Expense Buddy</h2>');
+    print('        <p>Expense Buddy Web lets you keep track of your daily expenses.</p>');
+    printf('        <p>To start: <a href="%s">Log in</a> or <a href="%s">Create a new account</a></p>', siteurl("p=login"), siteurl("p=register"));
+    print('    </div>');
+    print('</div>');
 }
 function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');
     print('    <div class="titlebar">Login</div>');
     print('    <div>');
-    print('        <form class="simpleform" action="/?p=login" method="POST">');
+    printf('       <form class="simpleform" action="%s" method="POST">', siteurl("p=login"));
     print('        <h2 class="heading">Login</h2>');
 
     $username = trim(sgetv($_POST, "username"));
@@ -190,7 +204,7 @@ function print_login_panel($errno=0) {
     print('    <button class="submit" name="submit" type="submit" value="login">Login</button>');
     print('</div>');
     print('</form>');
-    print('<p><a href="/?p=register">Create New Account</a></p>');
+    printf('<p><a href="%s">Create New Account</a></p>', siteurl("p=register"));
     print('</div>');
     print('</div>');
 }
@@ -198,7 +212,7 @@ function print_register_panel($errno=0) {
     print('<div class="panel register-panel">');
     print('    <div class="titlebar">Create New User</div>');
     print('    <div>');
-    print('        <form class="simpleform" action="/?p=register" method="POST">');
+    printf('        <form class="simpleform" action="%s" method="POST">', siteurl("p=register"));
     print('        <h2 class="heading">Create New User</h2>');
 
     $username = trim(sgetv($_POST, "username"));
@@ -240,7 +254,7 @@ function print_register_panel($errno=0) {
     print('    <button class="submit" name="submit" type="submit" value="register">Register</button>');
     print('</div>');
     print('</form>');
-    print('<p><a href="/?p=login">Log in to existing account</a></p>');
+    printf('<p><a href="%s">Log in to existing account</a></p>', siteurl("p=login"));
     print('</div>');
     print('</div>');
 }
@@ -258,7 +272,7 @@ function print_addexp_panel($db, $user, $errno=0) {
     print('<div class="panel editexp-panel">');
     print('  <div class="titlebar">New Expense</div>');
     print('  <div>');
-    print('      <form class="entryform" action="/?p=addexp" method="POST">');
+    printf('      <form class="entryform" action="%s" method="POST">', siteurl("p=addexp"));
     print('          <h2 class="heading">Enter Expense Details</h2>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
@@ -309,17 +323,29 @@ function print_exp_panel($db, $user) {
     $xps = dbquery($db, $sql, $user["user_id"]);
 
     print('<div class="panel explist-panel">');
-
     print('<div class="titlebar flex-between">');
-    print('    <form class="menuform">');
-    print('        <select id="expmenu" name="expmenu">');
-    print('            <option value="expenses">Expenses</option>');
-    print('            <option value="categories">Categories</option>');
-    print('            <option value="yeartodate">Year-to-Date</option>');
+    printf('    <form class="menuform" action="%s" method="GET">', siteurl());
+    printf('        <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
+    print('        <select name="tab">');
+
+    $tab = sgetv($_GET, "tab");
+    if (strequals($tab, "") || strequals($tab, "exp"))
+        print('<option value="exp" selected>Expenses</option>');
+    else
+        print('<option value="exp">Expenses</option>');
+    if (strequals($tab, "cat"))
+        print('<option value="cat" selected>Categories</option>');
+    else
+        print('<option value="cat">Categories</option>');
+    if (strequals($tab, "ytd"))
+        print('<option value="ytd" selected>Year-to-Date</option>');
+    else
+        print('<option value="ytd">Year-to-Date</option>');
+
     print('        </select>');
     print('        <input type="submit" value="Go">');
     print('    </form>');
-    print('    <a href="?p=addexp">Add Expense</a>');
+    printf('    <a href="%s">Add Expense</a>', siteurl("p=addexp"));
     print('</div>');
 
     print('<div>');
@@ -340,7 +366,7 @@ function print_exp_panel($db, $user) {
         printf('<td>%s</td>', $xp["desc"]);
         printf('<td>%9.2f</td>', $xp["amt"]);
         printf('<td>%s</td>', $xp["catname"]);
-        printf('<td><a href="/">#%d</a></td>', $xp["exp_id"]);
+        printf('<td><a href="%s">#%d</a></td>', siteurl(), $xp["exp_id"]);
         print('</tr>');
     }
 
