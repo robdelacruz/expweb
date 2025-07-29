@@ -80,10 +80,18 @@ html {
     background-color: #aaa;
     background-color: var(--earthgrey);
     line-height: 1.5;
+
+    background-size: 100vw 100vh;
 }
 .mini {
     font-size: 12px;
 }
+html.wp1 {background-image: url("images/wp1.jpg");}
+html.wp2 {background-image: url("images/wp2.jpg");}
+html.wp3 {background-image: url("images/wp3.jpg");}
+html.wp4 {background-image: url("images/wp4.jpg");}
+html.wp5 {background-image: url("images/wp5.jpg");}
+
 body {
     margin: 1rem auto;
     max-width: 800px;

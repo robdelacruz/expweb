@@ -71,6 +71,13 @@ function main() {
             header(location_header());
             return;
         }
+    } else if (strequals($submit, "editexp")) {
+        $expid = intval(sgetv($_GET, "expid"));
+        $errno = edit_exp($db, $user["user_id"], $expid, $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
+        if ($errno == 0) {
+            header(location_header());
+            return;
+        }
     } else {
         // unknown submit
         header(location_header());
@@ -79,6 +86,9 @@ function main() {
 
     if (strequals($cancel, "")) {
     } else if (strequals($p, "addexp")) {
+        header(location_header());
+        return;
+    } else if (strequals($p, "editexp")) {
         header(location_header());
         return;
     } else {
@@ -98,6 +108,8 @@ start_page:
         print_welcome_panel();
     else if (strequals($p, "addexp"))
         print_addexp_panel($db, $user, $errno);
+    else if (strequals($p, "editexp"))
+        print_editexp_panel($db, $user, $errno);
     else
         print_exp_panel($db, $user);
     print_foot();
@@ -128,7 +140,11 @@ function print_head() {
     print('<!DOCTYPE html>');
 
     $view = sgetv($_GET, "view");
-    printf('<html class="%s">', $view);
+    $wp = "";
+#    if (!strequals($view, "mini"))
+#        $wp = sprintf("wp%d", rand(1,5));
+
+    printf('<html class="%s %s">', $wp, $view);
     print('<head>');
     print('<meta charset="utf-8">');
     print('<meta name="viewport" content="width=device-width, initial-scale=1">');
@@ -324,6 +340,79 @@ function print_addexp_panel($db, $user, $errno=0) {
     print('</div>');
     print('</div>');
 }
+function print_editexp_panel($db, $user, $errno=0) {
+    $expid = intval(sgetv($_GET, "expid"));
+    if ($expid == 0) {
+        print_addexp_panel($db, $user, $errno);
+        return;
+    }
+
+    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.exp_id = ?"; 
+    $xp = dbquery_one($db, $sql, $user["user_id"], $expid);
+    if (!$xp) {
+        print_addexp_panel($db, $user, $errno);
+        return;
+    }
+    $isodate = date("Y-m-d", $xp["date"]);
+
+    if ($errno > 0) {
+        $xp["desc"] = trim(sgetv($_POST, "desc"));
+        $xp["amt"] = floatval(trim(sgetv($_POST, "amt")));
+        $xp["catname"] = trim(sgetv($_POST, "cat"));
+        $isodate = trim(sgetv($_POST, "date"));
+    }
+
+    $cats = dbquery($db, "SELECT cat_id, name FROM cat WHERE user_id = ? ORDER BY name", $user["user_id"]);
+
+    print('<div class="panel editexp-panel">');
+    print('  <div class="titlebar">Edit Expense</div>');
+    print('  <div>');
+    $editexp_params = sprintf("p=editexp&expid=%d", $expid);
+    printf('      <form class="entryform" action="%s" method="POST">', siteurl($editexp_params));
+    print('          <h2 class="heading">Edit Expense Details</h2>');
+    print('          <div class="control">');
+    print('              <label for="desc">Description</label>');
+    if ($errno == E_DESC_REQUIRED)
+        printf('<input id="desc" name="desc" type="text" size="25" value="%s" class="invalid">', $xp["desc"]);
+    else
+        printf('<input id="desc" name="desc" type="text" size="25" value="%s">', $xp["desc"]);
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="amt">Amount</label>');
+    if ($errno == E_AMT_REQUIRED)
+        printf('<input id="amt" name="amt" type="number" step="0.01" value="%.2f" class="invalid">', $xp["amt"]);
+    else
+        printf('<input id="amt" name="amt" type="number" step="0.01" min="0" value="%.2f">', $xp["amt"]);
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="cat">Category</label>');
+    if ($errno == E_CAT_REQUIRED || $errno == E_CAT_NOT_FOUND)
+        printf('<input id="cat" name="cat" type="text" list="catlist" size="10" value="%s" class="invalid">', $xp["catname"]);
+    else
+        printf('<input id="cat" name="cat" type="text" list="catlist" size="10" value="%s">', $xp["catname"]);
+    print('              <datalist id="catlist">');
+    for ($i=0; $i < count($cats); $i++) {
+        $cat = $cats[$i];
+        printf('<option value="%s">', $cat["name"]);
+    }
+    print('              </datalist>');
+    print('          </div>');
+    print('          <div class="control">');
+    print('              <label for="date">Date</label>');
+    printf('              <input id="date" name="date" type="date" value="%s">', $isodate);
+    print('          </div>');
+
+    if ($errno != 0)
+        printf('<p class="error">%s</p>', _strerror($errno));
+
+    print('<div class="btnrow">');
+    print('    <button class="submit" name="submit" type="submit" value="editexp">OK</button>');
+    print('    <button name="cancel" value="editexp">Cancel</button>');
+    print('</div>');
+    print('</form>');
+    print('</div>');
+    print('</div>');
+}
 
 function print_exp_panel($db, $user) {
     $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? ORDER BY date"; 
@@ -373,7 +462,8 @@ function print_exp_panel($db, $user) {
         printf('<td>%s</td>', $xp["desc"]);
         printf('<td>%9.2f</td>', $xp["amt"]);
         printf('<td>%s</td>', $xp["catname"]);
-        printf('<td><a href="%s">#%d</a></td>', siteurl(), $xp["exp_id"]);
+        $editexp_params = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
+        printf('<td><a href="%s">#%d</a></td>', siteurl($editexp_params), $xp["exp_id"]);
         print('</tr>');
     }
 
@@ -411,6 +501,13 @@ function dbinsert($db, $sql, ...$params) {
 
     $newid = $db->lastInsertRowID();
     return $newid;
+}
+function dbupdate($db, $sql, ...$params) {
+    $stmt = $db->prepare($sql);
+    for ($i=0; $i < count($params); $i++)
+        $stmt->bindParam($i+1, $params[$i]);
+    $res = $stmt->execute();
+    $stmt->close();
 }
 function dbquery($db, $sql, ...$params) {
     $stmt = $db->prepare($sql);
@@ -550,6 +647,42 @@ function add_exp($db, $userid, $desc, $samt, $catname, $date) {
 
     $sql = "INSERT INTO exp (date, desc, amt, cat_id, user_id) VALUES (?, ?, ?, ?, ?)";
     $expid = dbinsert($db, $sql, $dt, $desc, $amt, $catid, $userid);
+    return 0;
+}
+function edit_exp($db, $userid, $expid, $desc, $samt, $catname, $date) {
+    $desc = trim($desc);
+    $samt = trim($samt);
+    $catname = trim($catname);
+    $date = trim($date);
+    if (strlen($desc) == 0)
+        return E_DESC_REQUIRED;
+    if (strlen($samt) == 0)
+        return E_AMT_REQUIRED;
+    $catname = trim($catname);
+    if (strlen($catname) == 0)
+        return E_CAT_REQUIRED;
+
+    $amt = floatval($samt);
+    $dt = strtotime($date);
+    if (!$dt)
+        $dt = time();
+
+    // Get existing category corresponding to $catname or create new category with $catname.
+    $sql = "SELECT cat_id FROM cat WHERE name = ? AND user_id = ?";
+    $cat = dbquery_one($db, $sql, $catname, $userid);
+    $catid = 0;
+    if (!$cat) {
+        $sql = "INSERT INTO cat (name, user_id) VALUES (?, ?)";
+        $catid = dbinsert($db, $sql, $catname, $userid);
+    } else {
+        $catid = $cat["cat_id"];
+    }
+    // This condition should never occur.
+    if ($catid == 0)
+        return E_CAT_NOT_FOUND;
+
+    $sql = "UPDATE exp SET date = ?, desc = ?, amt = ?, cat_id = ?, user_id = ? WHERE exp_id = ?";
+    $expid = dbupdate($db, $sql, $dt, $desc, $amt, $catid, $userid, $expid);
     return 0;
 }
 
