@@ -40,7 +40,7 @@ function main() {
     $db = init_db("test.db");
 
     $errno = 0;
-    $submit = sgetv($_POST, "submit");
+    $submit = getv($_POST, "submit");
     $cancel = sgetv($_POST, "cancel");
     $p = sgetv($_GET, "p");
     $user = get_session_user($db);
@@ -50,28 +50,27 @@ function main() {
         header(location_header());
         return;
     }
-#    printf("\$submit: '%s'\n", $submit);
-    if (strequals($submit, "")) {
+    if ($submit == null) {
         $errno = 0;
-    } else if (strequals($submit, "login")) {
+    } else if (strequals($p, "login")) {
         $errno = login_user($db, trim($_POST["username"]), $_POST["password"]);
         if ($errno == 0) {
             header(location_header());
             return;
         }
-    } else if (strequals($submit, "register")) {
+    } else if (strequals($p, "register")) {
         $errno = register_user($db, $_POST["username"], $_POST["password"], $_POST["password2"]);
         if ($errno == 0) {
             header(location_header());
             return;
         }
-    } else if (strequals($submit, "addexp")) {
+    } else if (strequals($p, "addexp")) {
         $errno = add_exp($db, $user["user_id"], $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
         if ($errno == 0) {
             header(location_header());
             return;
         }
-    } else if (strequals($submit, "editexp")) {
+    } else if (strequals($p, "editexp")) {
         $expid = intval(sgetv($_GET, "expid"));
         $errno = edit_exp($db, $user["user_id"], $expid, $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
         if ($errno == 0) {
@@ -217,7 +216,7 @@ function print_login_panel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit" value="login">Login</button>');
+    print('    <button class="submit" name="submit" type="submit">Login</button>');
     print('</div>');
     print('<div class="control">');
     printf('<p><a href="%s">Create New Account</a></p>', siteurl("p=register"));
@@ -270,7 +269,7 @@ function print_register_panel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit" value="register">Register</button>');
+    print('    <button class="submit" name="submit" type="submit">Register</button>');
     print('</div>');
 
     print('<div class="control">');
@@ -333,8 +332,8 @@ function print_addexp_panel($db, $user, $errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit" value="addexp">OK</button>');
-    print('    <button name="cancel" value="addexp">Cancel</button>');
+    print('    <button class="submit" name="submit" type="submit">OK</button>');
+    print('    <button name="cancel" type="submit" value="addexp">Cancel</button>');
     print('</div>');
     print('</form>');
     print('</div>');
@@ -406,8 +405,8 @@ function print_editexp_panel($db, $user, $errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit" value="editexp">OK</button>');
-    print('    <button name="cancel" value="editexp">Cancel</button>');
+    print('    <button class="submit" name="submit" type="submit">OK</button>');
+    print('    <button name="cancel" type="submit" value="editexp">Cancel</button>');
     print('</div>');
     print('</form>');
     print('</div>');
@@ -420,7 +419,7 @@ function print_exp_panel($db, $user) {
 
     print('<div class="panel explist-panel">');
     print('<div class="titlebar flex-between">');
-    printf('    <form class="menuform" action="%s" method="GET">', siteurl());
+    printf('    <form class="hbar" action="%s" method="GET">', siteurl());
     printf('        <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
     print('        <select name="tab">');
 
@@ -439,9 +438,12 @@ function print_exp_panel($db, $user) {
         print('<option value="ytd">Year-to-Date</option>');
 
     print('        </select>');
-    print('        <input type="submit" value="Go">');
+    print('        <input class="go" type="submit" value="Go">');
     print('    </form>');
-    printf('    <a href="%s">Add Expense</a>', siteurl("p=addexp"));
+
+    print('<form class="hbar">');
+    print('    <input type="submit" value="Filter...">');
+    printf('    <a href="%s" class="pill">+</a>', siteurl("p=addexp"));
     print('</div>');
 
     print('<div>');

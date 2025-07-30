@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+
 <div class="navbar">
         <ul class="line-menu">
             <li>Expense Buddy</li>
@@ -20,15 +21,19 @@
 </div>
     <div class="panel explist-panel">
         <div class="titlebar flex-between">
-            <form class="menuform">
-                <select id="expmenu" name="expmenu">
+            <form class="hbar">
+                <select name="tab">
                     <option value="expenses">Expenses</option>
                     <option value="categories">Categories</option>
                     <option value="yeartodate">Year-to-Date</option>
                 </select>
-                <input type="submit" value="Go">
+                <input class="go" type="submit" value="Go">
             </form>
-            <a href="/">Add Expense</a>
+            <form class="hbar">
+                <input type="submit" value="Filter...">
+<!--                <button>Filter...</button> -->
+                <a href="/" class="pill">+</a>
+            </form>
         </div>
         <div>
             <table class="expenses">
