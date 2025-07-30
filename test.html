@@ -31,7 +31,6 @@
             </form>
             <form class="hbar">
                 <input type="submit" value="Filter...">
-<!--                <button>Filter...</button> -->
                 <a href="/" class="pill">+</a>
             </form>
         </div>
@@ -147,6 +146,47 @@
             </table>
         </div>
     </div>
+    <div class="panel filter-panel">
+        <div class="titlebar">Filter Expenses</div>
+        <div class="vbar">
+            <form class="hbar">
+                <label for="">Date Range</label>
+                <select name="daterange">
+                    <option value="month" selected>Month</option>
+                    <option value="day">Day</option>
+                    <option value="year">Year</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input class="go" type="submit" value="Go">
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="monthyear">Select Month</label>
+                    <input id="monthyear" name="monthyear" type="month" value="2025-07">
+                </div>
+                <div class="control">
+                    <label for="year">Enter Year</label>
+                    <input id="year" name="year" type="number" step="1" size="4" value="2025">
+                </div>
+                <div class="control">
+                    <label for="day">Day</label>
+                    <input id="day" name="day" type="date" value="2025-07-01">
+                </div>
+                <div class="control">
+                    <label for="startdate">Start Date</label>
+                    <input id="startdate" name="startdate" type="date" value="2025-07-01">
+                </div>
+                <div class="control">
+                    <label for="enddate">End Date</label>
+                    <input id="enddate" name="enddate" type="date" value="2025-07-31">
+                </div>
+                <div class="btnrow">
+                    <button class="submit" type="submit">OK</button>
+                    <button type="submit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="panel login-panel">
         <div class="titlebar">Login</div>
         <div>
@@ -180,8 +220,8 @@
                     <input class="invalid" id="desc" name="desc" type="text" size="25" value="smurf tv tray">
                 </div>
                 <div class="control">
-                    <label for="amount">Amount</label>
-                    <input id="amount" name="amount" type="number" value="123.45">
+                    <label for="amt">Amount</label>
+                    <input id="amt" name="amt" type="number" value="123.45">
                 </div>
                 <div class="control">
                     <label for="cat">Category</label>
@@ -215,7 +255,7 @@
                 <p class="error">An error occurred editing the expense</p>
                 <div class="btnrow">
                     <button class="submit" type="submit">OK</button>
-                    <button class="submit">Cancel</button>
+                    <button>Cancel</button>
                 </div>
             </form>
         </div>

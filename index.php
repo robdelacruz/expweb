@@ -40,7 +40,7 @@ function main() {
     $db = init_db("test.db");
 
     $errno = 0;
-    $submit = getv($_POST, "submit");
+    $submit = sgetv($_POST, "submit");
     $cancel = sgetv($_POST, "cancel");
     $p = sgetv($_GET, "p");
     $user = get_session_user($db);
@@ -50,7 +50,7 @@ function main() {
         header(location_header());
         return;
     }
-    if ($submit == null) {
+    if (strequals($submit, "")) {
         $errno = 0;
     } else if (strequals($p, "login")) {
         $errno = login_user($db, trim($_POST["username"]), $_POST["password"]);
@@ -216,7 +216,7 @@ function print_login_panel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit">Login</button>');
+    print('    <button class="submit" name="submit" type="submit" value="submit">Login</button>');
     print('</div>');
     print('<div class="control">');
     printf('<p><a href="%s">Create New Account</a></p>', siteurl("p=register"));
@@ -269,7 +269,7 @@ function print_register_panel($errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit">Register</button>');
+    print('    <button class="submit" name="submit" type="submit" value="submit">Register</button>');
     print('</div>');
 
     print('<div class="control">');
@@ -332,8 +332,8 @@ function print_addexp_panel($db, $user, $errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit">OK</button>');
-    print('    <button name="cancel" type="submit" value="addexp">Cancel</button>');
+    print('    <button class="submit" name="submit" type="submit" value="submit">OK</button>');
+    print('    <button name="cancel" type="submit" value="cancel">Cancel</button>');
     print('</div>');
     print('</form>');
     print('</div>');
@@ -405,8 +405,8 @@ function print_editexp_panel($db, $user, $errno=0) {
         printf('<p class="error">%s</p>', _strerror($errno));
 
     print('<div class="btnrow">');
-    print('    <button class="submit" name="submit" type="submit">OK</button>');
-    print('    <button name="cancel" type="submit" value="editexp">Cancel</button>');
+    print('    <button class="submit" name="submit" type="submit" value="submit">OK</button>');
+    print('    <button name="cancel" type="submit" value="cancel">Cancel</button>');
     print('</div>');
     print('</form>');
     print('</div>');
@@ -441,7 +441,7 @@ function print_exp_panel($db, $user) {
     print('        <input class="go" type="submit" value="Go">');
     print('    </form>');
 
-    print('<form class="hbar">');
+    printf('<form class="hbar" action="%s" method="GET">', siteurl("p=filter"));
     print('    <input type="submit" value="Filter...">');
     printf('    <a href="%s" class="pill">+</a>', siteurl("p=addexp"));
     print('</div>');

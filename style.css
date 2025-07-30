@@ -14,6 +14,7 @@ input, select, textarea {
 }
 button {
     padding: 0.2rem 0.75rem;
+    font-size: smaller;
 }
 /* Hide datalist arrow */
 [list]::-webkit-calendar-picker-indicator {
@@ -46,12 +47,6 @@ input[type=number] {
     --lightgrey: #d0ccc0;
     --earthgrey: #686a59;
 }
-.m-0 {margin: 0;}
-.m-xs {margin: 0.25rem;}
-.m-sm {margin: 0.5rem;}
-.m-base {margin: 1rem;}
-.m-lg {margin: 1.25rem;}
-.m-xl {margin: 1.5rem;}
 
 h1, h2, h3, h4 {
     font-size: 1rem;
@@ -198,12 +193,7 @@ tr:nth-child(2n+1) {
     color: var(--darkgreen);
     font-weight: 500;
 }
-.simpleform .control {
-    margin: 0.5rem 0;
-}
-.simpleform label {
-    display: block;
-}
+
 input:focus, textarea:focus, button:focus {
     border: 2px solid;
 }
@@ -230,53 +220,58 @@ select {
     font-style: italic;
     color: #aa0000;
 }
-.simpleform .btnrow {
+.btnrow {
     display: flex;
     justify-content: flex-start;
     gap: 1rem;
+}
+form .heading {
+    margin-bottom: 0.5rem;
+}
+.control {
+    margin: 0.2rem 0;
+}
+.simpleform {
+}
+.simpleform label {
+    display: block;
 }
 
 .entryform {
     display: grid;
     gap: 0.5rem;
 }
-.entryform .heading {
-    margin-bottom: 0.5rem;
-}
 .entryform .control {
     display: grid;
     gap: 1rem;
     grid-template-columns: 10ch auto;
-    margin: 0.2rem 0;
 }
 .entryform label {
     text-align: right;
 }
 .entryform .btnrow {
-    display: flex;
     justify-content: flex-end;
-    gap: 1rem;
 }
 .entryform .error {
     text-align: right;
 }
-.entryform input[name=desc] {
+input[name=desc] {
     width: 30ch;
 }
-.entryform input[name=amt] {
+input[name=amt] {
     width: 15ch;
 }
-.entryform input[name=cat] {
+input[name=cat] {
     width: 20ch;
 }
-.entryform input[name=date] {
+input[name=date] {
     width: 16ch;
 }
 
-.simpleform input[name=username] {
+input[name=username] {
     width: 20ch;
 }
-.simpleform input[type=password] {
+input[type=password] {
     width: 20ch;
 }
 
@@ -291,11 +286,15 @@ select {
 }
 .hbar select,
 .hbar input[type=text] {
-    background-color: #fff;
+    /*background-color: #fff;*/
 }
-.hbar input {
+.hbar input,
+.hbar select {
     width: fit-content;
-    padding: 0 0.5rem;
+}
+.vbar {
+    display: grid;
+    gap: 0.5rem;
 }
 
 .login-panel {
@@ -305,6 +304,26 @@ select {
 .editexp-panel {
 }
 
+.filter-panel {
+}
+.filter-panel .hbar {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--lightgrey);
+    gap: 0.3rem;
+}
+.filter-panel input,
+.filter-panel select {
+    width: fit-content;
+}
+.filter-panel input[name=year] {
+    width: 7ch;
+}
+.filter-panel .simpleform .control:nth-child(1) {
+    margin-top: 0;
+}
+.filter-panel .btnrow {
+    margin-top: 1rem;
+}
 .explist-panel {
 }
 .explist-panel > div:nth-child(2) {
