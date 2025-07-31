@@ -427,17 +427,38 @@ function print_editexp_panel($db, $user, $errno=0) {
 }
 
 function print_exp_panel($db, $user) {
-    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? ORDER BY date"; 
-    $xps = dbquery($db, $sql, $user["user_id"]);
+    $view = sgetv($_GET, "view");
+    $tab = sgetv($_GET, "tab");
+    $period = sgetv($_GET, "period");
+    $month = sgetv($_GET, "month");
+    $year = sgetv($_GET, "year");
+    $day = sgetv($_GET, "day");
+    $startdate = sgetv($_GET, "startdate");
+    $enddate = sgetv($_GET, "enddate");
+
+    if (!$tab)
+        $tab = "exp";
+    if (!$period) 
+        $period = "month";
+    if (!$month)
+        $month = "2025-07";
+    if (!$year)
+        $year = "2025";
+    if (!$day)
+        $day = "2025-07-31";
+    if (!$startdate)
+        $startdate = "2025-07-01";
+    if (!$enddate)
+        $enddate = "2025-07-31";
 
     print('<div class="panel explist-panel">');
-    print('<div class="titlebar flex-between">');
-    printf('    <form class="hbar" action="%s" method="GET">', siteurl_get());
-    print('         <input type="hidden" name="p" value="viewexp">');
-    printf('        <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
-    print('         <select name="tab">');
+    print('    <div class="titlebar flex-between">');
 
-    $tab = sgetv($_GET, "tab");
+    # Expense/Categories/YearToDate tab submits to self (p=viewexp)
+    printf('<form class="hbar" action="%s" method="GET">', siteurl_get());
+    print('<input type="hidden" name="p" value="viewexp">');
+    printf('<input type="hidden" name="view" value="%s">', $view);
+    print('<select name="tab">');
     if (strequals($tab, "") || strequals($tab, "exp"))
         print('<option value="exp" selected>Expenses</option>');
     else
@@ -450,16 +471,23 @@ function print_exp_panel($db, $user) {
         print('<option value="ytd" selected>Year-to-Date</option>');
     else
         print('<option value="ytd">Year-to-Date</option>');
+    print('</select>');
+    print('<input class="go" type="submit" value="Go">');
+    print('</form>');
 
-    print('        </select>');
-    print('        <input class="go" type="submit" value="Go">');
-    print('    </form>');
-
-    printf('<form class="hbar" action="%s" method="GET">', siteurl_get());
-    printf('   <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
-    print('    <input type="hidden" name="p" value="filter">');
-    print('    <input type="submit" value="Filter...">');
+    # Filter button submits to filter panel (p=filter)
+    printf('<form class="hbar" action="%s" method="GET">', siteurl());
+    printf('    <input type="hidden" name="p" value="filter">');
+    printf('    <input type="hidden" name="view" value="%s">', $view);
+    printf('    <input type="hidden" name="period" value="%s">', $period);
+    printf('    <input type="hidden" name="month" value="%s">', $month);
+    printf('    <input type="hidden" name="year" value="%s">', $year);
+    printf('    <input type="hidden" name="day" value="%s">', $day);
+    printf('    <input type="hidden" name="startdate" value="%s">', $startdate);
+    printf('    <input type="hidden" name="enddate" value="%s">', $enddate);
+    printf('    <input type="submit" value="Filter...">');
     printf('    <a href="%s" class="pill">+</a>', siteurl_get("p=addexp"));
+    print('</form>');
     print('</div>');
 
     print('<div>');
@@ -473,6 +501,8 @@ function print_exp_panel($db, $user) {
     print('            <th>Record#</th>');
     print('        </tr>');
 
+    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? ORDER BY date"; 
+    $xps = dbquery($db, $sql, $user["user_id"]);
     for ($i=0; $i < count($xps); $i++) {
         $xp = $xps[$i];
         print('<tr>');
@@ -487,14 +517,97 @@ function print_exp_panel($db, $user) {
 
     print('</tbody>');
     print('</table>');
-    print('</div>');
 
+    print('    </div>');
     print('</div>');
 }
 function print_filter_panel() {
+    $view = sgetv($_GET, "view");
+    $period = sgetv($_GET, "period");
+    $month = sgetv($_GET, "month");
+    $year = sgetv($_GET, "year");
+    $day = sgetv($_GET, "day");
+    $startdate = sgetv($_GET, "startdate");
+    $enddate = sgetv($_GET, "enddate");
+
     print('<div class="panel filter-panel">');
     print('    <div class="titlebar">Filter Settings</div>');
     print('    <div class="vbar">');
+
+    # Period (Month/Day/Year/Custom) selector submits to self (p=filter) 
+    printf('<form class="hbar" action="%s">', siteurl_get());
+    printf('    <input type="hidden" name="p" value="filter">');
+    printf('    <input type="hidden" name="view" value="%s">', $view);
+    printf('    <input type="hidden" name="period" value="%s">', $period);
+    printf('    <input type="hidden" name="month" value="%s">', $month);
+    printf('    <input type="hidden" name="year" value="%s">', $year);
+    printf('    <input type="hidden" name="day" value="%s">', $day);
+    printf('    <input type="hidden" name="startdate" value="%s">', $startdate);
+    printf('    <input type="hidden" name="enddate" value="%s">', $enddate);
+    print('<label for="period">Date Range</label>');
+    print('<select name="period">');
+    if (strequals($period, "month") || strequals($period, ""))
+        print('<option value="month" selected>Month</option>');
+    else
+        print('<option value="month">Month</option>');
+    if (strequals($period, "year"))
+        print('<option value="year" selected>Year</option>');
+    else
+        print('<option value="year">Year</option>');
+    if (strequals($period, "day"))
+        print('<option value="day" selected>Day</option>');
+    else
+        print('<option value="day">Day</option>');
+    if (strequals($period, "custom"))
+        print('<option value="custom" selected>Custom</option>');
+    else
+        print('<option value="custom">Custom</option>');
+    print('</select>');
+    print('<input class="go" type="submit" value="Go">');
+    print('</form>');
+
+    # Period value (2025/2025-07 etc) submits to viewexp (p=viewexp)
+    printf('<form class="simpleform" action="%s" method="GET"', siteurl());
+    printf('    <input type="hidden" name="p" value="viewexp">');
+    printf('    <input type="hidden" name="view" value="%s">', $view);
+    printf('    <input type="hidden" name="period" value="%s">', $period);
+    printf('    <input type="hidden" name="month" value="%s">', $month);
+    printf('    <input type="hidden" name="year" value="%s">', $year);
+    printf('    <input type="hidden" name="day" value="%s">', $day);
+    printf('    <input type="hidden" name="startdate" value="%s">', $startdate);
+    printf('    <input type="hidden" name="enddate" value="%s">', $enddate);
+    if (strequals($period, "month") || strequals($period, "")) {
+        print('<div class="control">');
+        print('    <label for="month">Select Month</label>');
+        printf('    <input id="month" name="month" type="month" value="%s">', $month);
+        print('</div>');
+    } else if (strequals($period, "year")) {
+        print('<div class="control">');
+        print('<label for="year">Enter Year</label>');
+        printf('<input id="year" name="year" type="number" step="1" size="4" value="%s">', $year);
+        print('</div>');
+    } else if (strequals($period, "day")) {
+        print('<div class="control">');
+        print('<label for="day">Select Day</label>');
+        printf('<input id="day" name="day" type="date" value="%s">', $day);
+        print('</div>');
+    } else if (strequals($period, "custom")) {
+        print('<div class="control">');
+        print('<label for="startdate">Start Date</label>');
+        printf('<input id="startdate" name="startdate" type="date" value="%s">', $startdate);
+        print('</div>');
+        print('<div class="control">');
+        print('<label for="enddate">End Date</label>');
+        printf('<input id="enddate" name="enddate" type="date" value="%s">', $enddate);
+        print('</div>');
+    }
+    print('<div class="btnrow">');
+    print('<button class="submit" type="submit" value="submit">OK</button>');
+#    print('<button type="submit" value="cancel">Cancel</button>');
+    printf('<a href="%s" style="text-decoration: none; border: 1px solid; padding: 0.2rem 0.5rem;">Cancel</a>', siteurl_get("p=viewexp"));
+    print('</div>');
+    print('</form>');
+
     print('    </div>');
     print('</div>');
 }
