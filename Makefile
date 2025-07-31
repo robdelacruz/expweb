@@ -16,6 +16,12 @@ status-php:
 restart-nginx:
 	systemctl restart nginx
 
+view-error:
+	cat /var/log/nginx/error.log
+
+open-error:
+	vi /var/log/nginx/error.log
+
 adduser:
 	gpasswd -a www-data `whoami`
 

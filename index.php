@@ -47,7 +47,7 @@ function main() {
 
     if (strequals($p, "logout")) {
         logout_user();
-        header(location_header());
+        header("Location: " . siteurl());
         return;
     }
     if (strequals($submit, "")) {
@@ -55,44 +55,40 @@ function main() {
     } else if (strequals($p, "login")) {
         $errno = login_user($db, trim($_POST["username"]), $_POST["password"]);
         if ($errno == 0) {
-            header(location_header());
+            header("Location: " . siteurl());
             return;
         }
     } else if (strequals($p, "register")) {
         $errno = register_user($db, $_POST["username"], $_POST["password"], $_POST["password2"]);
         if ($errno == 0) {
-            header(location_header());
+            header("Location: " . siteurl());
             return;
         }
     } else if (strequals($p, "addexp")) {
         $errno = add_exp($db, $user["user_id"], $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
         if ($errno == 0) {
-            header(location_header());
+            header("Location: " . siteurl_get("p=viewexp"));
             return;
         }
     } else if (strequals($p, "editexp")) {
         $expid = intval(sgetv($_GET, "expid"));
         $errno = edit_exp($db, $user["user_id"], $expid, $_POST["desc"], $_POST["amt"], $_POST["cat"], $_POST["date"]);
         if ($errno == 0) {
-            header(location_header());
+            header("Location: " . siteurl_get("p=viewexp"));
             return;
         }
     } else {
         // unknown submit
-        header(location_header());
+        header("Location: " . siteurl_get());
         return;
     }
 
-    if (strequals($cancel, "")) {
-    } else if (strequals($p, "addexp")) {
-        header(location_header());
-        return;
-    } else if (strequals($p, "editexp")) {
-        header(location_header());
-        return;
-    } else {
-        // unknown cancel
-        header(location_header());
+    if (!strequals($cancel, "")) {
+        if (strequals($p, "addexp") || strequals($p, "editexp")) {
+            header("Location: " . siteurl_get("p=viewexp"));
+            return;
+        }
+        header("Location: " . siteurl());
         return;
     }
 
@@ -109,31 +105,48 @@ start_page:
         print_addexp_panel($db, $user, $errno);
     else if (strequals($p, "editexp"))
         print_editexp_panel($db, $user, $errno);
+    else if (strequals($p, "viewexp"))
+        print_exp_panel($db, $user);
+    else if (strequals($p, "filter"))
+        print_filter_panel();
     else
         print_exp_panel($db, $user);
     print_foot();
 }
 
-# Return site url.
-# siteurl("p=index&seq=1")
-#   returns "/?p=index&seq=1", "/?view=mini&p=index&seq=1"
-# siteurl() returns "/"
-function siteurl($urlparams="") {
-    $view = sgetv($_GET, "view");
-    if (!$view) {
-        if (!$urlparams)
-            return "/";
-        else
-            return sprintf("/?%s", $urlparams);
+# Given: "p=login&view=mini"
+# Returns: ["p" => "login", "view" => "mini"]
+function parse_querystring($querystring, $initqs=[]) {
+    $qs = $initqs;
+    $params = explode("&", $querystring);
+    foreach ($params as $param) {
+        $kv = explode("=", $param);
+        if (count($kv) < 2)
+            continue;
+        $qs[$kv[0]] = $kv[1];
     }
-
-    if (!$urlparams)
-        return sprintf("/?view=%s", $view);
-    else
-        return sprintf("/?view=%s&%s", $view, $urlparams);
+    return $qs;
 }
-function location_header($urlparams="") {
-    return "Location: " . siteurl($urlparams);
+
+function siteurl($initqs=[], $querystring="") {
+    $view = sgetv($_GET, "view");
+    if ($view)
+        $initqs["view"] = $view;
+    $qs = parse_querystring($querystring, $initqs);
+
+    $url = "/";
+    $i=0;
+    foreach ($qs as $k => $v) {
+        if ($i == 0)
+            $url .= "?$k=$v";
+        else
+            $url .= "&$k=$v";
+        $i++;
+    }
+    return $url;
+}
+function siteurl_get($querystring="") {
+    return siteurl($_GET, $querystring);
 }
 function print_head() {
     print('<!DOCTYPE html>');
@@ -166,10 +179,10 @@ function print_navbar($user) {
 
     print('<ul class="line-menu">');
     if (!$user) {
-        printf('<li><a href="%s">login</a></li>', siteurl("p=login"));
+        printf('<li><a href="%s">login</a></li>', siteurl_get("p=login"));
     } else {
-        printf('<li><a href="%s">%s</a></li>', siteurl(),  $user["username"]);
-        printf('<li><a href="%s">logout</a></li>', siteurl("p=logout"));
+        printf('<li><a href="%s">%s</a></li>', siteurl_get(), $user["username"]);
+        printf('<li><a href="%s">logout</a></li>', siteurl([], "p=logout"));
     }
     print('</ul>');
 
@@ -181,7 +194,7 @@ function print_welcome_panel() {
     print('    <div>');
     print('        <h2 class="heading">Welcome to Expense Buddy</h2>');
     print('        <p>Expense Buddy Web lets you keep track of your daily expenses.</p>');
-    printf('        <p>To start: <a href="%s">Log in</a> or <a href="%s">Create a new account</a></p>', siteurl("p=login"), siteurl("p=register"));
+    printf('        <p>To start: <a href="%s">Log in</a> or <a href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
     print('    </div>');
     print('</div>');
 }
@@ -189,7 +202,7 @@ function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');
     print('    <div class="titlebar">Login</div>');
     print('    <div>');
-    printf('       <form class="simpleform" action="%s" method="POST">', siteurl("p=login"));
+    printf('       <form class="simpleform" action="%s" method="POST">', siteurl_get("p=login"));
     print('        <h2 class="heading">Login</h2>');
 
     $username = trim(sgetv($_POST, "username"));
@@ -219,7 +232,7 @@ function print_login_panel($errno=0) {
     print('    <button class="submit" name="submit" type="submit" value="submit">Login</button>');
     print('</div>');
     print('<div class="control">');
-    printf('<p><a href="%s">Create New Account</a></p>', siteurl("p=register"));
+    printf('<p><a href="%s">Create New Account</a></p>', siteurl_get("p=register"));
     print('</div>');
 
     print('</form>');
@@ -230,7 +243,7 @@ function print_register_panel($errno=0) {
     print('<div class="panel register-panel">');
     print('    <div class="titlebar">Create New User</div>');
     print('    <div>');
-    printf('        <form class="simpleform" action="%s" method="POST">', siteurl("p=register"));
+    printf('        <form class="simpleform" action="%s" method="POST">', siteurl_get("p=register"));
     print('        <h2 class="heading">Create New User</h2>');
 
     $username = trim(sgetv($_POST, "username"));
@@ -273,7 +286,7 @@ function print_register_panel($errno=0) {
     print('</div>');
 
     print('<div class="control">');
-    printf('<p><a href="%s">Log in to existing account</a></p>', siteurl("p=login"));
+    printf('<p><a href="%s">Log in to existing account</a></p>', siteurl_get("p=login"));
     print('</div>');
 
     print('</form>');
@@ -294,7 +307,7 @@ function print_addexp_panel($db, $user, $errno=0) {
     print('<div class="panel editexp-panel">');
     print('  <div class="titlebar">New Expense</div>');
     print('  <div>');
-    printf('      <form class="entryform" action="%s" method="POST">', siteurl("p=addexp"));
+    printf('      <form class="entryform" action="%s" method="POST">', siteurl_get("p=addexp"));
     print('          <h2 class="heading">Enter Expense Details</h2>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
@@ -367,7 +380,7 @@ function print_editexp_panel($db, $user, $errno=0) {
     print('  <div class="titlebar">Edit Expense</div>');
     print('  <div>');
     $editexp_params = sprintf("p=editexp&expid=%d", $expid);
-    printf('      <form class="entryform" action="%s" method="POST">', siteurl($editexp_params));
+    printf('      <form class="entryform" action="%s" method="POST">', siteurl_get($editexp_params));
     print('          <h2 class="heading">Edit Expense Details</h2>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
@@ -419,9 +432,10 @@ function print_exp_panel($db, $user) {
 
     print('<div class="panel explist-panel">');
     print('<div class="titlebar flex-between">');
-    printf('    <form class="hbar" action="%s" method="GET">', siteurl());
+    printf('    <form class="hbar" action="%s" method="GET">', siteurl_get());
+    print('         <input type="hidden" name="p" value="viewexp">');
     printf('        <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
-    print('        <select name="tab">');
+    print('         <select name="tab">');
 
     $tab = sgetv($_GET, "tab");
     if (strequals($tab, "") || strequals($tab, "exp"))
@@ -441,9 +455,11 @@ function print_exp_panel($db, $user) {
     print('        <input class="go" type="submit" value="Go">');
     print('    </form>');
 
-    printf('<form class="hbar" action="%s" method="GET">', siteurl("p=filter"));
+    printf('<form class="hbar" action="%s" method="GET">', siteurl_get());
+    printf('   <input type="hidden" name="view" value="%s">', sgetv($_GET, "view"));
+    print('    <input type="hidden" name="p" value="filter">');
     print('    <input type="submit" value="Filter...">');
-    printf('    <a href="%s" class="pill">+</a>', siteurl("p=addexp"));
+    printf('    <a href="%s" class="pill">+</a>', siteurl_get("p=addexp"));
     print('</div>');
 
     print('<div>');
@@ -465,7 +481,7 @@ function print_exp_panel($db, $user) {
         printf('<td>%9.2f</td>', $xp["amt"]);
         printf('<td>%s</td>', $xp["catname"]);
         $editexp_params = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
-        printf('<td><a href="%s">#%d</a></td>', siteurl($editexp_params), $xp["exp_id"]);
+        printf('<td><a href="%s">#%d</a></td>', siteurl_get($editexp_params), $xp["exp_id"]);
         print('</tr>');
     }
 
@@ -473,6 +489,13 @@ function print_exp_panel($db, $user) {
     print('</table>');
     print('</div>');
 
+    print('</div>');
+}
+function print_filter_panel() {
+    print('<div class="panel filter-panel">');
+    print('    <div class="titlebar">Filter Settings</div>');
+    print('    <div class="vbar">');
+    print('    </div>');
     print('</div>');
 }
 
