@@ -16,6 +16,9 @@ status-php:
 restart-nginx:
 	systemctl restart nginx
 
+restart-php:
+	systemctl restart php8.1-fpm
+
 view-error:
 	cat /var/log/nginx/error.log
 
