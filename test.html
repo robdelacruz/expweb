@@ -19,7 +19,54 @@
             <li><a href="/">logout</a></li>
         </ul>
 </div>
-    <div class="panel explist-panel">
+<div class="maingrid">
+    <div class="panel filter-panel">
+        <div class="titlebar">Filter Settings</div>
+        <div class="vbar">
+            <form class="simpleform">
+                <div class="control">
+                    <label for="month">Show Month</label>
+                    <div class="hbar">
+                        <input id="month" name="month" type="month" value="2025-07">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="year">Show Year</label>
+                    <div class="hbar">
+                        <input id="year" name="year" type="number" step="1" size="4" value="2025">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="day">Show Day</label>
+                    <div class="hbar">
+                        <input id="day" name="day" type="date" value="2025-07-01">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="startdate">Start Date</label>
+                    <input id="startdate" name="startdate" type="date" value="2025-07-01">
+                </div>
+                <div class="control">
+                    <label for="enddate">End Date</label>
+                    <input id="enddate" name="enddate" type="date" value="2025-07-31">
+                </div>
+                <div class="btnrow">
+                    <!--<button class="submit" type="submit">Go</button>-->
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel view-panel">
         <div class="titlebar flex-between">
             <form id="exptab" class="hbar">
                 <select name="tab">
@@ -146,93 +193,6 @@
             </table>
         </div>
     </div>
-    <div class="panel filter-panel">
-        <div class="titlebar">Filter Settings</div>
-        <div class="vbar">
-            <form class="simpleform">
-                <div class="control">
-                    <label for="month">Show Month</label>
-                    <div class="hbar">
-                        <input id="month" name="month" type="month" value="2025-07">
-                        <input class="go" type="submit" value="Go">
-                    </div>
-                </div>
-            </form>
-            <form class="simpleform">
-                <div class="control">
-                    <label for="year">Show Year</label>
-                    <div class="hbar">
-                        <input id="year" name="year" type="number" step="1" size="4" value="2025">
-                        <input class="go" type="submit" value="Go">
-                    </div>
-                </div>
-            </form>
-            <form class="simpleform">
-                <div class="control">
-                    <label for="day">Show Day</label>
-                    <div class="hbar">
-                        <input id="day" name="day" type="date" value="2025-07-01">
-                        <input class="go" type="submit" value="Go">
-                    </div>
-                </div>
-            </form>
-            <form class="simpleform">
-                <div class="control">
-                    <label for="startdate">Start Date</label>
-                    <input id="startdate" name="startdate" type="date" value="2025-07-01">
-                </div>
-                <div class="control">
-                    <label for="enddate">End Date</label>
-                    <input id="enddate" name="enddate" type="date" value="2025-07-31">
-                </div>
-                <div class="btnrow">
-                    <!--<button class="submit" type="submit">Go</button>-->
-                    <input class="go" type="submit" value="Go">
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="panel filter2-panel">
-        <div class="titlebar">Filter Settings</div>
-        <div class="vbar">
-            <form class="hbar">
-                <label for="period">Date Range</label>
-                <select name="period">
-                    <option value="month" selected>Month</option>
-                    <option value="year">Year</option>
-                    <option value="day">Day</option>
-                    <option value="custom">Custom</option>
-                </select>
-                <input class="go" type="submit" value="Go">
-            </form>
-            <form class="simpleform">
-                <div class="control">
-                    <label for="month">Select Month</label>
-                    <input id="month" name="month" type="month" value="2025-07">
-                </div>
-                <div class="control">
-                    <label for="year">Enter Year</label>
-                    <input id="year" name="year" type="number" step="1" size="4" value="2025">
-                </div>
-                <div class="control">
-                    <label for="day">Select Day</label>
-                    <input id="day" name="day" type="date" value="2025-07-01">
-                </div>
-                <div class="control">
-                    <label for="startdate">Start Date</label>
-                    <input id="startdate" name="startdate" type="date" value="2025-07-01">
-                </div>
-                <div class="control">
-                    <label for="enddate">End Date</label>
-                    <input id="enddate" name="enddate" type="date" value="2025-07-31">
-                </div>
-                <div class="btnrow">
-                    <button class="submit" type="submit">OK</button>
-                    <button type="submit">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="panel login-panel">
         <div class="titlebar">Login</div>
         <div>
@@ -321,6 +281,7 @@
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
     </div>
+</div>
 </body>
 </html>
 

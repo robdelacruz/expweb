@@ -108,7 +108,8 @@ body {
 }
 .maingrid {
     display: grid;
-    grid-template-columns: min-content min-content;
+    /*grid-template-columns: min-content min-content;*/
+    grid-template-columns: min-content auto;
     gap: 0;
 }
 .maingrid .panel {
@@ -334,29 +335,10 @@ input[type=password] {
     border-bottom: 1px solid var(--lightgrey);
 }
 
-.filter2-panel {
+.view-panel {
+    width: 99%;
 }
-.filter2-panel .hbar {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--lightgrey);
-    gap: 0.3rem;
-}
-.filter2-panel input,
-.filter2-panel select {
-    width: fit-content;
-}
-.filter2-panel input[name=year] {
-    width: 7ch;
-}
-.filter2-panel .simpleform .control:nth-child(1) {
-    margin-top: 0;
-}
-.filter2-panel .btnrow {
-    margin-top: 1rem;
-}
-.explist-panel {
-}
-.explist-panel > div:nth-child(2) {
+.view-panel > div:nth-child(2) {
     padding: 0;
 }
 .expenses {
@@ -372,7 +354,8 @@ input[type=password] {
 }
 /* Desc */
 .expenses td:nth-child(2) {
-    max-width: 30ch;
+    max-width: 25ch;
+    width: 100%;
 }
 .mini .expenses td:nth-child(2) {
     max-width: 15ch;
@@ -388,7 +371,7 @@ input[type=password] {
 }
 /* Category */
 .expenses td:nth-child(4) {
-    max-width: 25ch;
+    max-width: 15ch;
 }
 .mini .expenses td:nth-child(4) {
     max-width: 15ch;
