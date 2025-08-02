@@ -21,7 +21,7 @@
 </div>
     <div class="panel explist-panel">
         <div class="titlebar flex-between">
-            <form class="hbar">
+            <form id="exptab" class="hbar">
                 <select name="tab">
                     <option value="expenses">Expenses</option>
                     <option value="categories">Categories</option>
@@ -31,7 +31,7 @@
             </form>
             <form class="hbar">
                 <input type="submit" value="Filter...">
-                <a href="/" class="pill">+</a>
+                <a href="/" class="smallpill">+</a>
             </form>
         </div>
         <div>
@@ -147,6 +147,52 @@
         </div>
     </div>
     <div class="panel filter-panel">
+        <div class="titlebar">Filter Settings</div>
+        <div class="vbar">
+            <form class="simpleform">
+                <div class="control">
+                    <label for="month">Show Month</label>
+                    <div class="hbar">
+                        <input id="month" name="month" type="month" value="2025-07">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="year">Show Year</label>
+                    <div class="hbar">
+                        <input id="year" name="year" type="number" step="1" size="4" value="2025">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="day">Show Day</label>
+                    <div class="hbar">
+                        <input id="day" name="day" type="date" value="2025-07-01">
+                        <input class="go" type="submit" value="Go">
+                    </div>
+                </div>
+            </form>
+            <form class="simpleform">
+                <div class="control">
+                    <label for="startdate">Start Date</label>
+                    <input id="startdate" name="startdate" type="date" value="2025-07-01">
+                </div>
+                <div class="control">
+                    <label for="enddate">End Date</label>
+                    <input id="enddate" name="enddate" type="date" value="2025-07-31">
+                </div>
+                <div class="btnrow">
+                    <!--<button class="submit" type="submit">Go</button>-->
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel filter2-panel">
         <div class="titlebar">Filter Settings</div>
         <div class="vbar">
             <form class="hbar">

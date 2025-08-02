@@ -64,6 +64,12 @@ a, a:visited {
     padding: 0.2rem 0.5rem;
     border-radius: 5px;
 }
+.smallpill {
+    background-color: #ddd;
+    color: #000;
+    padding: 0 0.5rem;
+    border-radius: 5px;
+}
 .flex-between {
     display: flex;
     flex-wrap: nowrap;
@@ -99,6 +105,14 @@ body {
     margin: 0;
     max-width: 400px;
     padding-bottom: 0.2rem;
+}
+.maingrid {
+    display: grid;
+    grid-template-columns: min-content min-content;
+    gap: 0;
+}
+.maingrid .panel {
+    margin: 0.1rem;
 }
 .panel {
     background-color: #fff;
@@ -169,7 +183,8 @@ tr:nth-child(2n+1) {
     align-self: center;
     font-size: inherit;
 }
-.titlebar .pill {
+.titlebar .pill,
+.titlebar .smallpill {
     color: #000;
     font-weight: 900;
     text-decoration: none;
@@ -264,7 +279,7 @@ input[name=amt] {
 input[name=cat] {
     width: 20ch;
 }
-input[name=date] {
+input[type=date] {
     width: 16ch;
 }
 
@@ -304,24 +319,39 @@ input[type=password] {
 .editexp-panel {
 }
 
-.filter-panel {
+.filter-panel > div:nth-child(2) {
+    padding: 0.2rem;
 }
-.filter-panel .hbar {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--lightgrey);
-    gap: 0.3rem;
-}
-.filter-panel input,
-.filter-panel select {
+.filter-panel input {
     width: fit-content;
 }
 .filter-panel input[name=year] {
     width: 7ch;
 }
-.filter-panel .simpleform .control:nth-child(1) {
+.filter-panel form {
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--lightgrey);
+    border-bottom: 1px solid var(--lightgrey);
+}
+
+.filter2-panel {
+}
+.filter2-panel .hbar {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--lightgrey);
+    gap: 0.3rem;
+}
+.filter2-panel input,
+.filter2-panel select {
+    width: fit-content;
+}
+.filter2-panel input[name=year] {
+    width: 7ch;
+}
+.filter2-panel .simpleform .control:nth-child(1) {
     margin-top: 0;
 }
-.filter-panel .btnrow {
+.filter2-panel .btnrow {
     margin-top: 1rem;
 }
 .explist-panel {
