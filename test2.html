@@ -25,6 +25,9 @@
     <div class="titlebar">Filter Settings</div>
     <div class="vbar">
         <form class="simpleform">
+            <input name="view" type="hidden" value="">
+            <input name="p" type="hidden" value="viewexp">
+            <input name="period" type="hidden" value="month">
             <div class="control">
                 <label for="month">Show Month</label>
                 <div class="hbar">
@@ -33,9 +36,13 @@
                 </div>
             </div>
         </form>
-        <form class="simpleform">
+        <form class="simpleform" action="/" method="GET">
+            <input name="view" type="hidden" value="">
+            <input name="p" type="hidden" value="viewexp">
+            <input name="period" type="hidden" value="year">
             <div class="control">
                 <label for="year">Show Year</label>
+                <input name="period" type="hidden" value="year">
                 <div class="hbar">
                     <input id="year" name="year" type="number" step="1" size="4" value="2025">
                     <input class="go" type="submit" value="Go">
@@ -43,6 +50,7 @@
             </div>
         </form>
         <form class="simpleform">
+            <input name="period" type="hidden" value="day">
             <div class="control">
                 <label for="day">Show Day</label>
                 <div class="hbar">
@@ -52,6 +60,7 @@
             </div>
         </form>
         <form class="simpleform">
+            <input name="period" type="hidden" value="range">
             <div class="control">
                 <label for="startdate">Start Date</label>
                 <input id="startdate" name="startdate" type="date" value="2025-07-01">
@@ -73,6 +82,7 @@
         <a href="/" class="smallpill">+</a>
     </div>
     <div>
+        <p class="heading">Date Range: 2025-07-01 to 2025-07-31</p>
         <table class="expenses">
             <tbody>
             <tr>

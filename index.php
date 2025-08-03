@@ -432,48 +432,96 @@ function print_view_panels($db, $user) {
 }
 
 function print_filter_panel() {
+    $period = sgetv($_GET, "period");
+    if (strequals($period, ""))
+        $period = "month";
+
+    $month = sgetv($_GET, "month");
+    $year = sgetv($_GET, "year");
+    $day = sgetv($_GET, "day");
+    $startdate = sgetv($_GET, "startdate");
+    $enddate = sgetv($_GET, "enddate");
+
+    $today_isodate = date("Y-m-d", time());
+    if (strlen($month) == 0)
+        $month = substr($today_isodate, 0, 7);
+    if (strlen($year) == 0)
+        $year = substr($today_isodate, 0, 4);
+    if (strlen($day) == 0)
+        $day = $today_isodate;
+    if (strlen($startdate) == 0) {
+        $y = 0;
+        $m = 0;
+        $d = 0;
+        date_to_cal(time(), $y, $m, $d);
+        $startdate = date("Y-m-d", date_from_cal($y, $m, 1));
+    }
+    if (strlen($enddate) == 0) {
+        $y = 0;
+        $m = 0;
+        $d = 0;
+        date_to_cal(date_from_iso($startdate), $y, $m, $d);
+        $enddate = date("Y-m-d", date_prev_day(date_next_month(date_from_cal($y, $m, 1))));
+    }
+
     print('<div class="panel filter-panel">');
     print('<div class="titlebar">Filter Settings</div>');
     print('<div class="vbar">');
 
-    printf('<form class="simpleform" action="%s" method="POST">', siteurl_get("p=viewexp"));
+    if (strequals($period, "month"))
+        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
+    else
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    print_filter_hidden_inputs("month");
     print('<div class="control">');
     print('    <label for="month">Show Month</label>');
     print('    <div class="hbar">');
-    printf('       <input id="month" name="month" type="month" value="%s">', "2025-07");
+    printf('       <input id="month" name="month" type="month" value="%s">', $month);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
     print('</div>');
     print('</form>');
 
-    printf('<form class="simpleform" action="%s" method="POST">', siteurl_get("p=viewexp"));
+    if (strequals($period, "year"))
+        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
+    else
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    print_filter_hidden_inputs("year");
     print('<div class="control">');
     print('    <label for="year">Show Year</label>');
     print('    <div class="hbar">');
-    printf('       <input id="year" name="year" type="number" step="1" size="4"  value="%s">', "2025");
+    printf('       <input id="year" name="year" type="number" step="1" size="4"  value="%s">', $year);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
     print('</div>');
     print('</form>');
 
-    printf('<form class="simpleform" action="%s" method="POST">', siteurl_get("p=viewexp"));
+    if (strequals($period, "day"))
+        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
+    else
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    print_filter_hidden_inputs("day");
     print('<div class="control">');
     print('    <label for="day">Show Day</label>');
     print('    <div class="hbar">');
-    printf('       <input id="day" name="day" type="date" value="%s">', "2025-07-01");
+    printf('       <input id="day" name="day" type="date" value="%s">', $day);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
     print('</div>');
     print('</form>');
 
-    printf('<form class="simpleform" action="%s" method="POST">', siteurl_get("p=viewexp"));
+    if (strequals($period, "range"))
+        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
+    else
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    print_filter_hidden_inputs("range");
     print('<div class="control">');
     print('    <label for="startdate">Start Date</label>');
-    printf('   <input id="startdate" name="startdate" type="date" value="%s">', "2025-07-01");
+    printf('   <input id="startdate" name="startdate" type="date" value="%s">', $startdate);
     print('</div>');
     print('<div class="control">');
-    print('    <label for="enddate">Start Date</label>');
-    printf('   <input id="enddate" name="enddate" type="date" value="%s">', "2025-07-31");
+    print('    <label for="enddate">End Date</label>');
+    printf('   <input id="enddate" name="enddate" type="date" value="%s">', $enddate);
     print('</div>');
     print('<div class="btnrow">');
     print('    <input class="go" type="submit" value="Go">');
@@ -483,8 +531,63 @@ function print_filter_panel() {
     print('</div>'); # vbar
     print('</div>'); # filter-panel
 }
+function print_filter_hidden_inputs($periodval) {
+    $view = sgetv($_GET, "view");
+    $p = sgetv($_GET, "p");
+    printf('<input name="view" type="hidden" value="%s">', $view);
+    printf('<input name="p" type="hidden" value="%s">', $p);
+    printf('<input name="period" type="hidden" value="%s">', $periodval);
+}
 
+# GET parameters:
+# period=month
+# month=2025-07
+# 
+# period=year
+# year=2025
+#
+# period=day
+# day=2025-07-31
+#
+# period=range
+# startdate=2025-07-01
+# enddate=2025-07-31
 function print_view_panel($db, $user) {
+    # Normalize inputs into startdt and enddt.
+    # Ex. For period=month, month=2025-07, set startdt/enddt to 2025-07-01, 2025-08-01
+    #     For period=year, year=2025, set startdt/enddt to 2025-01-01, 2026-01-01
+    #     For period=day, day=2025-07-31, set startdt/enddt to 2025-07-31, 2025-08-01
+    #     For period=range, use startdate,enddate
+    $startdt = 0;
+    $enddt = 0;
+    $period = sgetv($_GET, "period");
+    if (strequals($period, "month")) {
+        $month = sgetv($_GET, "month");
+        $startdt = date_from_iso($month);
+        $enddt = date_next_month($startdt);
+    } else if (strequals($period, "year")) {
+        $year = sgetv($_GET, "year");
+        $startdt = date_from_iso($year);
+        $enddt = date_next_year($startdt);
+    } else if (strequals($period, "day")) {
+        $day = sgetv($_GET, "day");
+        $startdt = date_from_iso($day);
+        $enddt = date_next_day($startdt);
+    } else if (strequals($period, "range")) {
+        $startdate = sgetv($_GET, "startdate");
+        $enddate = sgetv($_GET, "enddate");
+        $startdt = date_from_iso($startdate);
+        $enddt = date_next_day(date_from_iso($enddate));
+    } else {
+        # Default to current month
+        $year = 0;
+        $month = 0;
+        $day = 0;
+        date_to_cal(time(), $year, $month, $day);
+        $startdt = date_from_cal($year, $month, 1);
+        $enddt = date_next_month($startdt);
+    }
+
     print('<div class="panel view-panel">');
 
     print('<div class="titlebar flex-between">');
@@ -493,6 +596,7 @@ function print_view_panel($db, $user) {
     print('</div>');
 
     print('<div>');
+    printf('<p class="heading">Date Range: %s to %s', date("Y-m-d", $startdt), date("Y-m-d", date_prev_day($enddt)));
     print('    <table class="expenses">');
     print('        <tbody>');
     print('        <tr>');
@@ -503,8 +607,8 @@ function print_view_panel($db, $user) {
     print('            <th>Record#</th>');
     print('        </tr>');
 
-    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? ORDER BY date"; 
-    $xps = dbquery($db, $sql, $user["user_id"]);
+    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? ORDER BY date DESC"; 
+    $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
     for ($i=0; $i < count($xps); $i++) {
         $xp = $xps[$i];
         print('<tr>');
@@ -735,5 +839,88 @@ function edit_exp($db, $userid, $expid, $desc, $samt, $catname, $date) {
     $sql = "UPDATE exp SET date = ?, desc = ?, amt = ?, cat_id = ?, user_id = ? WHERE exp_id = ?";
     $expid = dbupdate($db, $sql, $dt, $desc, $amt, $catid, $userid, $expid);
     return 0;
+}
+
+# Date functions
+function date_from_cal($year, $month, $day) {
+    $dt = mktime(0, 0, 0, $month, $day, $year);
+    if (!$dt)
+        $dt = time();
+    return $dt;
+}
+function date_to_cal($dt, &$year, &$month, &$day) {
+    $tm = localtime($dt, true);
+    $year = $tm["tm_year"] + 1900;
+    $month = $tm["tm_mon"]+1;
+    $day = $tm["tm_mday"];
+}
+function isodate_to_cal($isodate, &$year, &$month, &$day) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+
+    $ss = explode("-", $isodate);
+    $year = intval($ss[0]);
+    if (count($ss) > 1) {
+        $month = intval($ss[1]);
+    }
+    if (count($ss) > 2) {
+        $day = intval($ss[2]);
+    }
+
+    # If incomplete isodate (Ex. "2025", "2025-07"), defaults to first month/day.
+    if ($year == 0)
+        $year = 1970;
+    if ($month == 0)
+        $month = 1;
+    if ($day == 0)
+        $day = 1;
+}
+function date_from_iso($isodate) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+    isodate_to_cal($isodate, $year, $month, $day);
+    return date_from_cal($year, $month, $day);
+}
+function date_prev_month($dt) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+    date_to_cal($dt, $year, $month, $day);
+    if ($month == 1)
+        return date_from_cal($year-1, 12, $day);
+    else
+        return date_from_cal($year, $month-1, $day);
+}
+function date_next_month($dt) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+    date_to_cal($dt, $year, $month, $day);
+    if ($month == 12)
+        return date_from_cal($year+1, 1, $day);
+    else
+        return date_from_cal($year, $month+1, $day);
+}
+function date_prev_day($dt) {
+    return $dt - 24*60*60;
+}
+function date_next_day($dt) {
+    return $dt + 24*60*60;
+}
+function date_prev_year($dt) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+    date_to_cal($dt, $year, $month, $day);
+    return date_from_cal($year-1, $month, $day);
+}
+function date_next_year($dt) {
+    $year = 0;
+    $month = 0;
+    $day = 0;
+    date_to_cal($dt, $year, $month, $day);
+    return date_from_cal($year+1, $month, $day);
 }
 

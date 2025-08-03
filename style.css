@@ -152,6 +152,8 @@ tr:nth-child(2n+1) {
 }
 .heading {
     font-size: 1rem;
+    margin: 0.2rem 0.5rem;
+    1font-weight: 500;
 }
 .masthead {
     height: 50px;
@@ -333,6 +335,10 @@ input[type=password] {
     padding: 0.1rem 0.5rem;
     border: 1px solid var(--lightgrey);
     border-bottom: 1px solid var(--lightgrey);
+}
+.filter-panel .active {
+    background-color: #adff2f;
+    border: 2px solid var(--lightgreen);
 }
 
 .view-panel {
