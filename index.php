@@ -475,7 +475,7 @@ function print_filter_panel() {
     print_filter_hidden_inputs("month");
     print('<div class="control">');
     print('    <label for="month">Show Month</label>');
-    print('    <div class="hbar">');
+    print('    <div class="gobar">');
     printf('       <input id="month" name="month" type="month" value="%s">', $month);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
@@ -489,7 +489,7 @@ function print_filter_panel() {
     print_filter_hidden_inputs("year");
     print('<div class="control">');
     print('    <label for="year">Show Year</label>');
-    print('    <div class="hbar">');
+    print('    <div class="gobar">');
     printf('       <input id="year" name="year" type="number" step="1" size="4"  value="%s">', $year);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
@@ -503,7 +503,7 @@ function print_filter_panel() {
     print_filter_hidden_inputs("day");
     print('<div class="control">');
     print('    <label for="day">Show Day</label>');
-    print('    <div class="hbar">');
+    print('    <div class="gobar">');
     printf('       <input id="day" name="day" type="date" value="%s">', $day);
     print('        <input class="go" type="submit" value="Go">');
     print('    </div>');
@@ -560,24 +560,29 @@ function print_view_panel($db, $user) {
     #     For period=range, use startdate,enddate
     $startdt = 0;
     $enddt = 0;
+    $range_caption = "";
     $period = sgetv($_GET, "period");
     if (strequals($period, "month")) {
         $month = sgetv($_GET, "month");
         $startdt = date_from_iso($month);
         $enddt = date_next_month($startdt);
+        $range_caption = date("F Y", $startdt);
     } else if (strequals($period, "year")) {
         $year = sgetv($_GET, "year");
         $startdt = date_from_iso($year);
         $enddt = date_next_year($startdt);
+        $range_caption = date("Y", $startdt);
     } else if (strequals($period, "day")) {
         $day = sgetv($_GET, "day");
         $startdt = date_from_iso($day);
         $enddt = date_next_day($startdt);
+        $range_caption = date("D M j Y", $startdt);
     } else if (strequals($period, "range")) {
         $startdate = sgetv($_GET, "startdate");
         $enddate = sgetv($_GET, "enddate");
         $startdt = date_from_iso($startdate);
         $enddt = date_next_day(date_from_iso($enddate));
+        $range_caption = sprintf("%s to %s", date("Y-m-d", $startdt), date("Y-m-d", date_prev_day($enddt)));
     } else {
         # Default to current month
         $year = 0;
@@ -588,27 +593,55 @@ function print_view_panel($db, $user) {
         $enddt = date_next_month($startdt);
     }
 
+    $sql = "SELECT SUM(amt) as amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
+    $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    $amttotal = 0.0;
+    if ($xptotal)
+        $amttotal = $xptotal["amttotal"];
+
     print('<div class="panel view-panel">');
 
     print('<div class="titlebar flex-between">');
     print('    <p>View Expenses</p>');
-    printf('   <a href="%s" class="smallpill">+</a>', siteurl_get("p=addexp"));
     print('</div>');
 
     print('<div>');
-    printf('<p class="heading">Date Range: %s to %s', date("Y-m-d", $startdt), date("Y-m-d", date_prev_day($enddt)));
-    print('    <table class="expenses">');
-    print('        <tbody>');
-    print('        <tr>');
-    print('            <th>Date</th>');
-    print('            <th>Description</th>');
-    print('            <th>Amount</th>');
-    print('            <th>Category</th>');
-    print('            <th>Record#</th>');
-    print('        </tr>');
+    print('<div class="hbar infobar flex-between">');
+    print('    <div class="hbar">');
+    print('        <form class="gobar" method="GET" action="/test2.html">');
+    print('            <select name="tab">');
+    print('                <option value="exp">Expenses</option>');
+    print('                <option value="cat">Categories</option>');
+    print('                <option value="ytd">Year-to-Date</option>');
+    print('            </select>');
+    print('            <input class="go" type="submit" value="Go">');
+    print('        </form>');
+    printf('       <p>%s</p>', $range_caption);
+    print('    </div>');
+    print('    <div class="hbar">');
+    printf('       <p>Total: %.2f</p>', $amttotal);
+    printf('       <a href="%s" class="smallpill bold">+</a>', siteurl_get("p=addexp"));
+    print('    </div>');
+    print('</div>');
 
     $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? ORDER BY date DESC"; 
     $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
+
+    if (count($xps) == 0) {
+        print('<p class="infobar italic">No Expenses</p>');
+        goto view_panel_end;
+    }
+
+    print('<table class="expenses">');
+    print('<tbody>');
+    print('    <tr>');
+    print('        <th>Date</th>');
+    print('        <th>Description</th>');
+    print('        <th>Amount</th>');
+    print('        <th>Category</th>');
+    print('        <th>Record#</th>');
+    print('    </tr>');
+
     for ($i=0; $i < count($xps); $i++) {
         $xp = $xps[$i];
         print('<tr>');
@@ -623,8 +656,9 @@ function print_view_panel($db, $user) {
 
     print('</tbody>');
     print('</table>');
-    print('</div>');
 
+view_panel_end:
+    print('</div>');
     print('</div>'); # view-panel
 
 }
