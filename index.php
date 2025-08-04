@@ -593,11 +593,14 @@ function print_view_panel($db, $user) {
         $enddt = date_next_month($startdt);
     }
 
-    $sql = "SELECT SUM(amt) as amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
+    $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
     $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    $numitems = 0;
     $amttotal = 0.0;
-    if ($xptotal)
+    if ($xptotal) {
+        $numitems = $xptotal["numitems"];
         $amttotal = $xptotal["amttotal"];
+    }
 
     print('<div class="panel view-panel">');
 
@@ -608,7 +611,8 @@ function print_view_panel($db, $user) {
     print('<div>');
     print('<div class="hbar infobar flex-between">');
     print('    <div class="hbar">');
-    print('        <form class="gobar" method="GET" action="/test2.html">');
+    printf('       <form class="gobar" method="GET" action="%s">', siteurl());
+    # Todo: Add hidden inputs
     print('            <select name="tab">');
     print('                <option value="exp">Expenses</option>');
     print('                <option value="cat">Categories</option>');
@@ -619,7 +623,10 @@ function print_view_panel($db, $user) {
     printf('       <p>%s</p>', $range_caption);
     print('    </div>');
     print('    <div class="hbar">');
-    printf('       <p>Total: %.2f</p>', $amttotal);
+    if ($numitems == 1)
+        printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
+    else
+        printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
     printf('       <a href="%s" class="smallpill bold">+</a>', siteurl_get("p=addexp"));
     print('    </div>');
     print('</div>');
@@ -628,7 +635,7 @@ function print_view_panel($db, $user) {
     $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
 
     if (count($xps) == 0) {
-        print('<p class="infobar italic">No Expenses</p>');
+        print('<p class="infobar italic">(No items)</p>');
         goto view_panel_end;
     }
 
@@ -647,7 +654,8 @@ function print_view_panel($db, $user) {
         print('<tr>');
         printf('<td>%s</td>', date("Y-m-d", $xp["date"]));
         printf('<td>%s</td>', $xp["desc"]);
-        printf('<td>%9.2f</td>', $xp["amt"]);
+        #printf('<td>%9.2f</td>', $xp["amt"]);
+        printf('<td>%s</td>', number_format($xp["amt"], 2));
         printf('<td>%s</td>', $xp["catname"]);
         $editexp_params = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
         printf('<td><a href="%s">#%d</a></td>', siteurl_get($editexp_params), $xp["exp_id"]);
