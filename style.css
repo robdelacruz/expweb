@@ -326,7 +326,6 @@ input[type=password] {
 }
 .vbar {
     display: grid;
-    gap: 0.5rem;
 }
 .infobar {
     padding: 0.4rem 0.4rem;
@@ -344,8 +343,12 @@ input[type=password] {
 .editexp-panel {
 }
 
+.filter-panel {
+    background-color: var(--lightgrey);
+}
 .filter-panel > div:nth-child(2) {
-    padding: 0.2rem;
+    /*padding: 0.2rem;*/
+    padding: 0;
 }
 .filter-panel input {
     width: fit-content;
@@ -354,9 +357,10 @@ input[type=password] {
     width: 7ch;
 }
 .filter-panel form {
-    padding: 0.1rem 0.5rem;
-    border: 1px solid var(--lightgrey);
-    border-bottom: 1px solid var(--lightgrey);
+    /*padding: 0.1rem 0.5rem;*/
+    /*border: 1px solid var(--lightgrey);*/
+    padding: 0.2rem 0.5rem;
+    border-bottom: 1px solid var(--earthgrey);
 }
 .filter-panel .active {
     background-color: #adff2f;
