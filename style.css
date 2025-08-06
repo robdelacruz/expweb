@@ -76,6 +76,9 @@ a, a:visited {
     padding: 0 0.5rem;
     border-radius: 5px;
 }
+.box {
+    border: 1px solid;
+}
 .flex-between {
     display: flex;
     flex-wrap: nowrap;
@@ -134,10 +137,10 @@ body {
     margin: 0.2rem 0.2rem 0;
     box-shadow: 2px 2px #aaa;
 }
-.panel > div:nth-child(2) {
+.panel_body {
     padding: 0.5rem 1rem;
 }
-.mini .panel > div:nth-child(2) {
+.mini .panel_body {
 }
 table {
     border-collapse: collapse;
@@ -345,10 +348,21 @@ input[type=password] {
 
 .filter-panel {
     background-color: var(--lightgrey);
+    font-size: 12px;
 }
-.filter-panel > div:nth-child(2) {
-    /*padding: 0.2rem;*/
+.filter-panel .panel_body {
+/*    padding: 0.2rem 0.5rem;*/
+    padding: 0.5rem 0;
     padding: 0;
+}
+.filter-panel .panel_body > * {
+    padding: 0.2rem 0.5rem 0.5rem;
+}
+.filter-panel .panel_body > *:not(:last-child) {
+    border-bottom: 1px solid var(--earthgrey);
+}
+.filter-panel .control {
+    margin: 0;
 }
 .filter-panel input {
     width: fit-content;
@@ -356,22 +370,24 @@ input[type=password] {
 .filter-panel input[name=year] {
     width: 7ch;
 }
-.filter-panel form {
-    /*padding: 0.1rem 0.5rem;*/
-    /*border: 1px solid var(--lightgrey);*/
-    padding: 0.2rem 0.5rem;
-    border-bottom: 1px solid var(--earthgrey);
-}
-.filter-panel .active {
-    background-color: #adff2f;
-    border: 2px solid var(--lightgreen);
+.active {
+/*    background-color: #adff2f;*/
 }
 
 .view-panel {
     width: 99%;
 }
-.view-panel > div:nth-child(2) {
+.view-panel .panel_body {
     padding: 0;
+}
+.view-panel .panel_body .infobar > *:first-child {
+    flex-grow: 1;
+}
+.view-panel .search {
+    flex-grow: 1;
+}
+.view-panel .search input {
+    width: 80%;
 }
 .expenses {
 }

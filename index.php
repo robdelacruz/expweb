@@ -189,7 +189,7 @@ function print_navbar($user) {
 function print_welcome_panel() {
     print('<div class="panel">');
     print('    <p class="titlebar">Welcome</p>');
-    print('    <div>');
+    print('    <div class="panel_body">');
     print('        <h2 class="heading">Welcome to Expense Buddy</h2>');
     print('        <p>Expense Buddy Web lets you keep track of your daily expenses.</p>');
     printf('        <p>To start: <a href="%s">Log in</a> or <a href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
@@ -199,7 +199,7 @@ function print_welcome_panel() {
 function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');
     print('    <div class="titlebar">Login</div>');
-    print('    <div>');
+    print('    <div class="panel_body">');
     printf('       <form class="simpleform" action="%s" method="POST">', siteurl_get("p=login"));
     print('        <h2 class="heading">Login</h2>');
 
@@ -240,7 +240,7 @@ function print_login_panel($errno=0) {
 function print_register_panel($errno=0) {
     print('<div class="panel register-panel">');
     print('    <div class="titlebar">Create New User</div>');
-    print('    <div>');
+    print('    <div class="panel_body">');
     printf('        <form class="simpleform" action="%s" method="POST">', siteurl_get("p=register"));
     print('        <h2 class="heading">Create New User</h2>');
 
@@ -304,7 +304,7 @@ function print_addexp_panel($db, $user, $errno=0) {
 
     print('<div class="panel editexp-panel">');
     print('  <div class="titlebar">New Expense</div>');
-    print('  <div>');
+    print('  <div class="panel_body">');
     printf('      <form class="entryform" action="%s" method="POST">', siteurl_get("p=addexp"));
     print('          <h2 class="heading">Enter Expense Details</h2>');
     print('          <div class="control">');
@@ -376,7 +376,7 @@ function print_editexp_panel($db, $user, $errno=0) {
 
     print('<div class="panel editexp-panel">');
     print('  <div class="titlebar">Edit Expense</div>');
-    print('  <div>');
+    print('  <div class="panel_body">');
     $editexp_params = sprintf("p=editexp&expid=%d", $expid);
     printf('      <form class="entryform" action="%s" method="POST">', siteurl_get($editexp_params));
     print('          <h2 class="heading">Edit Expense Details</h2>');
@@ -465,8 +465,27 @@ function print_filter_panel() {
     }
 
     print('<div class="panel filter-panel">');
-    print('<div class="titlebar">Filter Settings</div>');
-    print('<div class="vbar">');
+
+    print('<div class="titlebar">Current View</div>');
+    print('<div class="panel_body vbar">');
+    printf('<form class="simpleform" method="GET" action="%s">', siteurl());
+    # Todo: Add hidden inputs
+    print('    <div class="control">');
+    print('        <label for="tab">View Items</label>');
+    print('        <div class="gobar">');
+    print('            <select name="tab">');
+    print('                <option value="exp">Expenses</option>');
+    print('                <option value="cat">Categories</option>');
+    print('                <option value="ytd">Year-to-Date</option>');
+    print('            </select>');
+    print('            <input class="go" type="submit" value="Go">');
+    print('        </div>');
+    print('    </div>');
+    print('</form>');
+    print('</div>');
+
+    print('<div class="titlebar">Date Range</div>');
+    print('<div class="panel_body vbar">');
 
     if (strequals($period, "month"))
         printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
@@ -608,26 +627,21 @@ function print_view_panel($db, $user) {
     print('    <p>View Expenses</p>');
     print('</div>');
 
-    print('<div>');
+    print('<div class="panel_body">');
+
     print('<div class="hbar infobar flex-between">');
     print('    <div class="hbar">');
-    printf('       <form class="gobar" method="GET" action="%s">', siteurl());
-    # Todo: Add hidden inputs
-    print('            <select name="tab">');
-    print('                <option value="exp">Expenses</option>');
-    print('                <option value="cat">Categories</option>');
-    print('                <option value="ytd">Year-to-Date</option>');
-    print('            </select>');
-    print('            <input class="go" type="submit" value="Go">');
-    print('        </form>');
-    printf('       <p>%s</p>', $range_caption);
+    printf('       <p class="pill">%s</p>', $range_caption);
+    print('        <div class="search">');
+    print('            <input name="search" type="text" placeholder="Search">');
+    print('        </div>');
     print('    </div>');
     print('    <div class="hbar">');
     if ($numitems == 1)
         printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
     else
         printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
-    printf('       <a href="%s" class="smallpill bold">+</a>', siteurl_get("p=addexp"));
+    printf('       <a href="%s" class="smallpill box">+</a>', siteurl_get("p=addexp"));
     print('    </div>');
     print('</div>');
 
@@ -666,7 +680,7 @@ function print_view_panel($db, $user) {
     print('</table>');
 
 view_panel_end:
-    print('</div>');
+    print('</div>'); # panel_body
     print('</div>'); # view-panel
 
 }

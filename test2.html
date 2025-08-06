@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Expense Buddy</title>
 <link rel="stylesheet" type="text/css" href="style.css">
-<script src="index.js" defer></script>
 </head>
 <body>
 
 <div class="navbar">
         <ul class="line-menu">
-            <li>Expense Buddy</li>
-            <li><a class="pill" href="/">Latest</a></li>
+            <li class="pill"><a href="/">Expense Buddy</a></li>
             <li><a href="/">About</a></li>
         </ul>
         <ul class="line-menu">
@@ -22,8 +20,27 @@
 </div>
 <div class="maingrid">
 <div class="panel filter-panel">
-    <div class="titlebar">Filter Settings</div>
-    <div class="vbar">
+    <div class="titlebar">Current View</div>
+    <div class="panel_body vbar">
+        <form class="simpleform" method="GET" action="/">
+            <input name="view" type="hidden" value="">
+            <input name="p" type="hidden" value="viewexp">
+            <input name="period" type="hidden" value="">
+            <div class="control">
+                <label for="tab">View Items</label>
+                <div class="gobar">
+                    <select name="tab">
+                        <option value="exp">Expenses</option>
+                        <option value="cat">Categories</option>
+                        <option value="ytd">Year-to-Date</option>
+                    </select>
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="titlebar">Date Range</div>
+    <div class="panel_body vbar">
         <form class="simpleform">
             <input name="view" type="hidden" value="">
             <input name="p" type="hidden" value="viewexp">
@@ -80,22 +97,17 @@
     <div class="titlebar flex-between">
         <p>View Expenses</p>
     </div>
-    <div>
+    <div class="panel_body">
         <div class="hbar infobar flex-between">
             <div class="hbar">
-                <form class="gobar" method="GET" action="/test2.html">
-                    <select name="tab">
-                        <option value="exp">Expenses</option>
-                        <option value="cat">Categories</option>
-                        <option value="ytd">Year-to-Date</option>
-                    </select>
-                    <input class="go" type="submit" value="Go">
-                </form>
-                <p>August 2025</p>
+                <p class="pill">August 2025</p>
+                <div class="search">
+                    <input name="search" type="text" placeholder="Search">
+                </div>
             </div>
             <div class="hbar">
-                <p>Total: 123.45</p>
-                <a href="/" class="smallpill bold">+</a>
+                <p>Total: 123.45 (12 items)</p>
+                <a href="/" class="smallpill box">+</a>
             </div>
         </div>
         <table class="expenses">
