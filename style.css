@@ -119,7 +119,10 @@ body {
     display: grid;
     /*grid-template-columns: min-content min-content;*/
     grid-template-columns: min-content auto;
-    gap: 0;
+}
+.mini .maingrid {
+    display: grid;
+    grid-template-columns: auto;
 }
 .maingrid .panel {
     margin: 0.1rem;
@@ -300,6 +303,12 @@ input[name=username] {
 input[type=password] {
     width: 20ch;
 }
+input[name=search] {
+    max-width: 20ch;
+}
+.mini input[name=search] {
+    max-width: 15ch;
+}
 
 .hbar {
     display: flex;
@@ -382,12 +391,6 @@ input[type=password] {
 }
 .view-panel .panel_body .infobar > *:first-child {
     flex-grow: 1;
-}
-.view-panel .search {
-    flex-grow: 1;
-}
-.view-panel .search input {
-    width: 80%;
 }
 .expenses {
 }

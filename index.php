@@ -610,6 +610,7 @@ function print_view_panel($db, $user) {
         date_to_cal(time(), $year, $month, $day);
         $startdt = date_from_cal($year, $month, 1);
         $enddt = date_next_month($startdt);
+        $range_caption = date("F Y", $startdt);
     }
 
     $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
@@ -632,9 +633,10 @@ function print_view_panel($db, $user) {
     print('<div class="hbar infobar flex-between">');
     print('    <div class="hbar">');
     printf('       <p class="pill">%s</p>', $range_caption);
-    print('        <div class="search">');
+    print('        <form class="gobar">');
     print('            <input name="search" type="text" placeholder="Search">');
-    print('        </div>');
+    print('            <input class="go" type="submit" value="Go">');
+    print('        </form>');
     print('    </div>');
     print('    <div class="hbar">');
     if ($numitems == 1)
