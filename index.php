@@ -426,12 +426,12 @@ function print_editexp_panel($db, $user, $errno=0) {
 
 function print_view_panels($db, $user) {
     print('<div class="maingrid">');
-    print_filter_panel();
+    print_sidebar_panel();
     print_view_panel($db, $user);
     print('</div>'); # maingrid
 }
 
-function print_filter_panel() {
+function print_sidebar_panel() {
     $period = sgetv($_GET, "period");
     if (strequals($period, ""))
         $period = "month";
@@ -464,7 +464,7 @@ function print_filter_panel() {
         $enddate = date("Y-m-d", date_prev_day(date_next_month(date_from_cal($y, $m, 1))));
     }
 
-    print('<div class="panel filter-panel">');
+    print('<div class="panel sidebar-panel">');
 
     print('<div class="titlebar">Current View</div>');
     print('<div class="panel_body vbar">');
@@ -548,7 +548,7 @@ function print_filter_panel() {
     print('</form>');
 
     print('</div>'); # vbar
-    print('</div>'); # filter-panel
+    print('</div>'); # sidebar-panel
 }
 function print_filter_hidden_inputs($periodval) {
     $view = sgetv($_GET, "view");
@@ -632,7 +632,7 @@ function print_view_panel($db, $user) {
 
     print('<div class="hbar infobar flex-between">');
     print('    <div class="hbar">');
-    printf('       <p class="pill">%s</p>', $range_caption);
+    printf('       <p class="pill dark">%s</p>', $range_caption);
     print('        <form class="gobar">');
     print('            <input name="search" type="text" placeholder="Search">');
     print('            <input class="go" type="submit" value="Go">');
@@ -643,7 +643,7 @@ function print_view_panel($db, $user) {
         printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
     else
         printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
-    printf('       <a href="%s" class="smallpill box">+</a>', siteurl_get("p=addexp"));
+    printf('       <a href="%s" class="pill smallpad green box">+</a>', siteurl_get("p=addexp"));
     print('    </div>');
     print('</div>');
 

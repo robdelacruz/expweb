@@ -19,7 +19,7 @@
         </ul>
 </div>
 <div class="maingrid">
-<div class="panel filter-panel">
+<div class="panel sidebar-panel">
     <div class="titlebar">Current View</div>
     <div class="panel_body vbar">
         <form class="simpleform" method="GET" action="/">
@@ -92,6 +92,27 @@
             </div>
         </form>
     </div>
+    <div class="titlebar">Login</div>
+    <div class="panel_body">
+        <form class="simpleform">
+            <h2 class="heading">Login</h2>
+            <div class="control">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" size="20" value="">
+            </div>
+            <div class="control">
+                <label for="password">Password</label>
+                <input class="invalid" id="password" name="password" type="password" size="20" value="">
+            </div>
+            <p class="error">Invalid username or password</p>
+            <div class="btnrow">
+                <button class="submit" type="submit">Login</button>
+            </div>
+            <div class="control">
+                <p><a href="/">Create New Account</a></p>
+            </div>
+        </form>
+    </div>
 </div>
 <div class="panel view-panel">
     <div class="titlebar flex-between">
@@ -100,7 +121,7 @@
     <div class="panel_body">
         <div class="hbar infobar flex-between">
             <div class="hbar">
-                <p class="pill">August 2025</p>
+                <p class="pill dark">August 2025</p>
                 <form class="gobar">
                     <input name="search" type="text" placeholder="Search">
                     <input class="go" type="submit" value="Go">
@@ -108,7 +129,7 @@
             </div>
             <div class="hbar">
                 <p>Total: 123.45 (12 items)</p>
-                <a href="/" class="smallpill box">+</a>
+                <a href="/" class="pill smallpad green box">+</a>
             </div>
         </div>
         <table class="expenses">

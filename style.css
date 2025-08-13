@@ -69,12 +69,18 @@ a, a:visited {
     color: #000;
     padding: 0.2rem 0.5rem;
     border-radius: 5px;
+    text-decoration: none;
 }
-.smallpill {
-    background-color: #ddd;
-    color: #000;
+.smallpad {
     padding: 0 0.5rem;
-    border-radius: 5px;
+}
+.dark {
+    background-color: #777;
+    color: #fff;
+}
+a.green, .green {
+    background-color: var(--lightgreen);
+    color: #fff;
 }
 .box {
     border: 1px solid;
@@ -205,6 +211,7 @@ tr:nth-child(2n+1) {
 }
 .go {
     font-size: smaller;
+    width: fit-content;
 }
 .line-menu {
     display: inline;
@@ -310,6 +317,10 @@ input[name=search] {
     max-width: 15ch;
 }
 
+input[name=year], .gobar input[name=year] {
+    width: 7ch;
+}
+
 .hbar {
     display: flex;
     flex-wrap: nowrap;
@@ -342,11 +353,6 @@ input[name=search] {
 .infobar {
     padding: 0.4rem 0.4rem;
 }
-.infobar .pill,
-.infobar .smallpill {
-    color: #000;
-    text-decoration: none;
-}
 
 .login-panel {
 }
@@ -355,32 +361,22 @@ input[name=search] {
 .editexp-panel {
 }
 
-.filter-panel {
+.sidebar-panel {
     background-color: var(--lightgrey);
     font-size: 12px;
 }
-.filter-panel .panel_body {
-/*    padding: 0.2rem 0.5rem;*/
+.sidebar-panel .panel_body {
     padding: 0.5rem 0;
     padding: 0;
 }
-.filter-panel .panel_body > * {
+.sidebar-panel .panel_body > * {
     padding: 0.2rem 0.5rem 0.5rem;
 }
-.filter-panel .panel_body > *:not(:last-child) {
+.sidebar-panel .panel_body > *:not(:last-child) {
     border-bottom: 1px solid var(--earthgrey);
 }
-.filter-panel .control {
+.sidebar-panel .control {
     margin: 0;
-}
-.filter-panel input {
-    width: fit-content;
-}
-.filter-panel input[name=year] {
-    width: 7ch;
-}
-.active {
-/*    background-color: #adff2f;*/
 }
 
 .view-panel {
@@ -437,5 +433,5 @@ input[name=search] {
     background-color: var(--mellowyellow);
     background-color: #77bf2a;
     background-color: #adff2f;
-    cursor: pointer;
+    cursor: default;
 }
