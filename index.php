@@ -432,6 +432,10 @@ function print_view_panels($db, $user) {
 }
 
 function print_sidebar_panel() {
+    $tab = sgetv($_GET, "tab");
+    if (strequals($tab, ""))
+        $tab = "exp";
+
     $period = sgetv($_GET, "period");
     if (strequals($period, ""))
         $period = "month";
@@ -469,14 +473,25 @@ function print_sidebar_panel() {
     print('<div class="titlebar">Current View</div>');
     print('<div class="panel_body vbar">');
     printf('<form class="simpleform" method="GET" action="%s">', siteurl());
-    # Todo: Add hidden inputs
+    print_querystring_hidden_inputs("tab");
     print('    <div class="control">');
     print('        <label for="tab">View Items</label>');
     print('        <div class="gobar">');
     print('            <select name="tab">');
-    print('                <option value="exp">Expenses</option>');
-    print('                <option value="cat">Categories</option>');
-    print('                <option value="ytd">Year-to-Date</option>');
+    if (strequals($tab, "exp"))
+        print('<option selected value="exp">Expenses</option>');
+    else
+        print('<option value="exp">Expenses</option>');
+
+    if (strequals($tab, "cat"))
+        print('<option selected  value="cat">Categories</option>');
+    else
+        print('<option value="cat">Categories</option>');
+
+    if (strequals($tab, "ytd"))
+        print('<option selected value="ytd">Year-to-Date</option>');
+    else
+        print('<option value="ytd">Year-to-Date</option>');
     print('            </select>');
     print('            <input class="go" type="submit" value="Go">');
     print('        </div>');
@@ -485,12 +500,9 @@ function print_sidebar_panel() {
     print('</div>');
 
     print('<div class="titlebar">Date Range</div>');
-    print('<div class="panel_body vbar">');
+    print('<div class="panel_body vbar vsep">');
 
-    if (strequals($period, "month"))
-        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
-    else
-        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
     print_filter_hidden_inputs("month");
     print('<div class="control">');
     print('    <label for="month">Show Month</label>');
@@ -501,10 +513,7 @@ function print_sidebar_panel() {
     print('</div>');
     print('</form>');
 
-    if (strequals($period, "year"))
-        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
-    else
-        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
     print_filter_hidden_inputs("year");
     print('<div class="control">');
     print('    <label for="year">Show Year</label>');
@@ -515,10 +524,7 @@ function print_sidebar_panel() {
     print('</div>');
     print('</form>');
 
-    if (strequals($period, "day"))
-        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
-    else
-        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
     print_filter_hidden_inputs("day");
     print('<div class="control">');
     print('    <label for="day">Show Day</label>');
@@ -529,10 +535,7 @@ function print_sidebar_panel() {
     print('</div>');
     print('</form>');
 
-    if (strequals($period, "range"))
-        printf('<form class="simpleform active" action="%s" method="GET">', siteurl());
-    else
-        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
     print_filter_hidden_inputs("range");
     print('<div class="control">');
     print('    <label for="startdate">Start Date</label>');
@@ -550,15 +553,26 @@ function print_sidebar_panel() {
     print('</div>'); # vbar
     print('</div>'); # sidebar-panel
 }
-function print_filter_hidden_inputs($periodval) {
+function print_filter_hidden_inputs($period) {
     $view = sgetv($_GET, "view");
     $p = sgetv($_GET, "p");
+    $tab = sgetv($_GET, "tab");
     printf('<input name="view" type="hidden" value="%s">', $view);
     printf('<input name="p" type="hidden" value="%s">', $p);
-    printf('<input name="period" type="hidden" value="%s">', $periodval);
+    printf('<input name="period" type="hidden" value="%s">', $period);
+    printf('<input name="tab" type="hidden" value="%s">', $tab);
+}
+function print_querystring_hidden_inputs($qexcept="") {
+    foreach ($_GET as $k => $v) {
+        if (strequals($qexcept, $k))
+            continue;
+        printf('<input name="%s" type="hidden" value="%s">', $k, $v);
+    }
 }
 
 # GET parameters:
+# tab=exp|cat|ytd
+#
 # period=month
 # month=2025-07
 # 
@@ -577,10 +591,12 @@ function print_view_panel($db, $user) {
     #     For period=year, year=2025, set startdt/enddt to 2025-01-01, 2026-01-01
     #     For period=day, day=2025-07-31, set startdt/enddt to 2025-07-31, 2025-08-01
     #     For period=range, use startdate,enddate
+    $tab = sgetv($_GET, "tab");
+    $period = sgetv($_GET, "period");
+
     $startdt = 0;
     $enddt = 0;
     $range_caption = "";
-    $period = sgetv($_GET, "period");
     if (strequals($period, "month")) {
         $month = sgetv($_GET, "month");
         $startdt = date_from_iso($month);
@@ -613,6 +629,17 @@ function print_view_panel($db, $user) {
         $range_caption = date("F Y", $startdt);
     }
 
+    if (strequals($tab, "exp"))
+        print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption);
+    else if (strequals($tab, "cat"))
+        print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption);
+    else if (strequals($tab, "ytd"))
+        print_ytd_view_panel($db, $user, $startdt, $enddt, $range_caption);
+    else
+        print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption);
+}
+
+function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
     $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
     $numitems = 0;
@@ -685,6 +712,11 @@ view_panel_end:
     print('</div>'); # panel_body
     print('</div>'); # view-panel
 
+}
+
+function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
+}
+function print_ytd_view_panel($db, $user, $startdt, $enddt, $range_caption) {
 }
 
 function getv($t, $k) {

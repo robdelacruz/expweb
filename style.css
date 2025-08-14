@@ -111,10 +111,11 @@ html.wp4 {background-image: url("images/wp4.jpg");}
 html.wp5 {background-image: url("images/wp5.jpg");}
 
 body {
-    margin: 1rem auto;
-    max-width: 800px;
+/*    margin: 1rem auto;*/
+    margin: 0 auto;
+    max-width: 850px;
     background-color: var(--lightgrey);
-    padding-bottom: 0.5rem;
+/*    padding-bottom: 0.5rem;*/
 }
 .mini body {
     margin: 0;
@@ -123,23 +124,24 @@ body {
 }
 .maingrid {
     display: grid;
-    /*grid-template-columns: min-content min-content;*/
-    grid-template-columns: min-content auto;
+    /*grid-template-columns: min-content auto;*/
+    /*grid-template-columns: 250px 600px;*/
+    grid-template-columns: 250px 600px;
 }
 .mini .maingrid {
     display: grid;
     grid-template-columns: auto;
 }
 .maingrid .panel {
-    margin: 0.1rem;
+/*    margin: 0.1rem;*/
 }
 .panel {
     background-color: #fff;
     overflow-x: auto;
     padding: 0;
-    margin: 0.5rem 0.5rem 0;
-    box-shadow: 2px 2px #aaa;
-    width: fit-content;
+/*    margin: 0.5rem 0.5rem 0;*/
+/*    box-shadow: 2px 2px #aaa;*/
+/*    width: fit-content;*/
 }
 .mini .panel {
     padding: 0;
@@ -198,6 +200,7 @@ tr:nth-child(2n+1) {
     color: #fff;
     padding: 0.1rem 0.2rem;
     font-weight: 500;
+    font-size: 12px;
 }
 .titlebar > * {
     align-self: center;
@@ -350,6 +353,10 @@ input[name=year], .gobar input[name=year] {
 .vbar {
     display: grid;
 }
+/*.vsep > *:not(:last-child) {*/
+.vsep > * {
+    border-bottom: 1px solid var(--earthgrey);
+}
 .infobar {
     padding: 0.4rem 0.4rem;
 }
@@ -360,10 +367,14 @@ input[name=year], .gobar input[name=year] {
 }
 .editexp-panel {
 }
+.editexp-panel .entryform {
+    width: fit-content;
+}
 
 .sidebar-panel {
     background-color: var(--lightgrey);
     font-size: 12px;
+    border-right: 2px solid var(--earthgrey);
 }
 .sidebar-panel .panel_body {
     padding: 0.5rem 0;
@@ -372,15 +383,11 @@ input[name=year], .gobar input[name=year] {
 .sidebar-panel .panel_body > * {
     padding: 0.2rem 0.5rem 0.5rem;
 }
-.sidebar-panel .panel_body > *:not(:last-child) {
-    border-bottom: 1px solid var(--earthgrey);
-}
 .sidebar-panel .control {
     margin: 0;
 }
 
 .view-panel {
-    width: 99%;
 }
 .view-panel .panel_body {
     padding: 0;
