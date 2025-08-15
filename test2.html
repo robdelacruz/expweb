@@ -21,7 +21,7 @@
 <div class="maingrid">
 <div class="panel sidebar-panel">
     <div class="titlebar">Current View</div>
-    <div class="panel_body vbar">
+    <div class="panel_body vbar vsep">
         <form class="simpleform" method="GET" action="/">
             <input name="view" type="hidden" value="">
             <input name="p" type="hidden" value="viewexp">
@@ -33,6 +33,28 @@
                         <option value="exp">Expenses</option>
                         <option value="cat">Categories</option>
                         <option value="ytd">Year-to-Date</option>
+                    </select>
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </div>
+        </form>
+        <form class="simpleform" method="GET" action="/">
+            <input name="view" type="hidden" value="">
+            <input name="p" type="hidden" value="viewexp">
+            <input name="period" type="hidden" value="">
+            <div class="control">
+                <label for="catid">Show Categories</label>
+                <div class="gobar">
+                    <select name="catid">
+                        <option value="1">Coffee</option>
+                        <option value="2">Grocery</option>
+                        <option value="3">Household</option>
+                        <option value="4">Utilities</option>
+                        <option value="5">Association Dues</option>
+                        <option value="6">Books</option>
+                        <option value="7">A very, very, very long category name that took me a long time to write</option>
+                        <option value="8">Medical</option>
+                        <option value="9">Dine Out</option>
                     </select>
                     <input class="go" type="submit" value="Go">
                 </div>

@@ -426,20 +426,19 @@ function print_editexp_panel($db, $user, $errno=0) {
 
 function print_view_panels($db, $user) {
     print('<div class="maingrid">');
-    print_sidebar_panel();
+    print_sidebar_panel($db, $user);
     print_view_panel($db, $user);
     print('</div>'); # maingrid
 }
 
-function print_sidebar_panel() {
+function print_sidebar_panel($db, $user) {
     $tab = sgetv($_GET, "tab");
     if (strequals($tab, ""))
         $tab = "exp";
-
     $period = sgetv($_GET, "period");
     if (strequals($period, ""))
         $period = "month";
-
+    $catid = intval(sgetv($_GET, "catid"));
     $month = sgetv($_GET, "month");
     $year = sgetv($_GET, "year");
     $day = sgetv($_GET, "day");
@@ -471,7 +470,8 @@ function print_sidebar_panel() {
     print('<div class="panel sidebar-panel">');
 
     print('<div class="titlebar">Current View</div>');
-    print('<div class="panel_body vbar">');
+    print('<div class="panel_body vbar vsep">');
+
     printf('<form class="simpleform" method="GET" action="%s">', siteurl());
     print_querystring_hidden_inputs("tab");
     print('    <div class="control">');
@@ -497,6 +497,36 @@ function print_sidebar_panel() {
     print('        </div>');
     print('    </div>');
     print('</form>');
+
+    if (strequals($tab, "exp")) {
+        $sql = "SELECT cat_id, name FROM cat WHERE user_id = ? ORDER BY name";
+        $cats = dbquery($db, $sql, $user["user_id"]);
+        if (count($cats) == 0)
+            goto no_cats;
+        printf('<form class="simpleform" method="GET" action="%s">', siteurl());
+        print_querystring_hidden_inputs("tab");
+        print('    <div class="control">');
+        print('        <label for="catid">Show Categories</label>');
+        print('        <div class="gobar">');
+        print('            <select name="catid">');
+        if ($catid == 0)
+            printf('<option selected value="0">All</option>');
+        else
+            printf('<option value="0">All</option>');
+        for ($i=0; $i < count($cats); $i++) {
+            $cat = $cats[$i];
+            if ($catid == $cat["cat_id"])
+                printf('<option selected value="%d">%s</option>', $cat["cat_id"], $cat["name"]);
+            else
+                printf('<option value="%d">%s</option>', $cat["cat_id"], $cat["name"]);
+        }
+        print('            </select>');
+        print('            <input class="go" type="submit" value="Go">');
+        print('        </div>');
+        print('    </div>');
+        print('</form>');
+    }
+no_cats:
     print('</div>');
 
     print('<div class="titlebar">Date Range</div>');
@@ -557,10 +587,12 @@ function print_filter_hidden_inputs($period) {
     $view = sgetv($_GET, "view");
     $p = sgetv($_GET, "p");
     $tab = sgetv($_GET, "tab");
+    $catid = intval(sgetv($_GET, "catid"));
     printf('<input name="view" type="hidden" value="%s">', $view);
     printf('<input name="p" type="hidden" value="%s">', $p);
     printf('<input name="period" type="hidden" value="%s">', $period);
     printf('<input name="tab" type="hidden" value="%s">', $tab);
+    printf('<input name="catid" type="hidden" value="%s">', $catid);
 }
 function print_querystring_hidden_inputs($qexcept="") {
     foreach ($_GET as $k => $v) {
@@ -640,8 +672,15 @@ function print_view_panel($db, $user) {
 }
 
 function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
-    $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
-    $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    $catid = intval(sgetv($_GET, "catid"));
+
+    if ($catid == 0) {
+        $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
+        $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    } else {
+        $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? AND cat_id = ?"; 
+        $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt, $catid);
+    }
     $numitems = 0;
     $amttotal = 0.0;
     if ($xptotal) {
@@ -674,11 +713,15 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('    </div>');
     print('</div>');
 
-    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? ORDER BY date DESC"; 
-    $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
-
+    if ($catid == 0) {
+        $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? ORDER BY date DESC"; 
+        $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
+    } else {
+        $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? AND exp.cat_id = ? ORDER BY date DESC"; 
+        $xps = dbquery($db, $sql, $user["user_id"], $startdt, $enddt, $catid);
+    }
     if (count($xps) == 0) {
-        print('<p class="infobar italic">(No items)</p>');
+        print('<p class="infobar italic">(No Expenses)</p>');
         goto view_panel_end;
     }
 
@@ -715,6 +758,71 @@ view_panel_end:
 }
 
 function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
+    $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?"; 
+    $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    $numitems = 0;
+    $amttotal = 0.0;
+    if ($xptotal) {
+        $numitems = $xptotal["numitems"];
+        $amttotal = $xptotal["amttotal"];
+    }
+
+    print('<div class="panel view-panel">');
+
+    print('<div class="titlebar flex-between">');
+    print('    <p>Categories Summary</p>');
+    print('</div>');
+
+    print('<div class="panel_body">');
+
+    print('<div class="hbar infobar flex-between">');
+    print('    <div class="hbar">');
+    printf('       <p class="pill dark">%s</p>', $range_caption);
+    print('        <form class="gobar">');
+    print('            <input name="search" type="text" placeholder="Search">');
+    print('            <input class="go" type="submit" value="Go">');
+    print('        </form>');
+    print('    </div>');
+    print('    <div class="hbar">');
+    if ($numitems == 1)
+        printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
+    else
+        printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
+    printf('       <a href="%s" class="pill smallpad green box">+</a>', siteurl_get("p=addexp"));
+    print('    </div>');
+    print('</div>');
+
+    $sql = "SELECT cat.cat_id AS catid, cat.name AS catname, SUM(amt) AS amttotal FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? GROUP BY cat.cat_id ORDER BY amttotal DESC";
+    $cats = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
+
+    if (count($cats) == 0) {
+        print('<p class="infobar italic">(No Expenses)</p>');
+        goto view_panel_end;
+    }
+
+    print('<table class="categories">');
+    print('<tbody>');
+    print('    <tr>');
+    print('        <th>Category</th>');
+    print('        <th>Total</th>');
+    print('    </tr>');
+
+    for ($i=0; $i < count($cats); $i++) {
+        $cat = $cats[$i];
+        print('<tr>');
+        $catidqs = sprintf("catid=%d&tab=exp", $cat["catid"]);
+        printf('<td><a href="%s">%s</a></td>', siteurl_get($catidqs), $cat["catname"]);
+        printf('<td>%s</td>', number_format($cat["amttotal"], 2));
+        print('</tr>');
+    }
+
+    print('</tbody>');
+    print('</table>');
+
+view_panel_end:
+    print('</div>'); # panel_body
+    print('</div>'); # view-panel
+
 }
 function print_ytd_view_panel($db, $user, $startdt, $enddt, $range_caption) {
 }

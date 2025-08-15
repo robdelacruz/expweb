@@ -247,6 +247,9 @@ input:focus, textarea:focus {
 select {
     padding: 0 0.5em;
 }
+select[name=catid] {
+    max-width: 20ch;
+}
 .submit {
     font-weight: bold;
     min-width: 10ch;
@@ -394,6 +397,20 @@ input[name=year], .gobar input[name=year] {
 }
 .view-panel .panel_body .infobar > *:first-child {
     flex-grow: 1;
+}
+.categories {
+}
+.categories td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.categories td:nth-child(1) {
+    max-width: 25ch;
+}
+.categories td:nth-child(2) {
+    text-align: right;
+    max-width: 15ch;
 }
 .expenses {
 }
