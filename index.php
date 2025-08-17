@@ -473,7 +473,7 @@ function print_sidebar_panel($db, $user) {
     print('<div class="panel_body vbar vsep">');
 
     printf('<form class="simpleform" method="GET" action="%s">', siteurl());
-    print_querystring_hidden_inputs("tab");
+    print_tab_hidden_inputs();
     print('    <div class="control">');
     print('        <label for="tab">View Items</label>');
     print('        <div class="gobar">');
@@ -504,7 +504,7 @@ function print_sidebar_panel($db, $user) {
         if (count($cats) == 0)
             goto no_cats;
         printf('<form class="simpleform" method="GET" action="%s">', siteurl());
-        print_querystring_hidden_inputs("tab");
+        print_tab_hidden_inputs();
         print('    <div class="control">');
         print('        <label for="catid">Show Categories</label>');
         print('        <div class="gobar">');
@@ -533,7 +533,8 @@ no_cats:
     print('<div class="panel_body vbar vsep">');
 
     printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_filter_hidden_inputs("month");
+    print_daterange_hidden_inputs();
+    print('<input name="period" type="hidden" value="month">');
     print('<div class="control">');
     print('    <label for="month">Show Month</label>');
     print('    <div class="gobar">');
@@ -544,7 +545,8 @@ no_cats:
     print('</form>');
 
     printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_filter_hidden_inputs("year");
+    print_daterange_hidden_inputs();
+    print('<input name="period" type="hidden" value="year">');
     print('<div class="control">');
     print('    <label for="year">Show Year</label>');
     print('    <div class="gobar">');
@@ -555,7 +557,8 @@ no_cats:
     print('</form>');
 
     printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_filter_hidden_inputs("day");
+    print_daterange_hidden_inputs();
+    print('<input name="period" type="hidden" value="day">');
     print('<div class="control">');
     print('    <label for="day">Show Day</label>');
     print('    <div class="gobar">');
@@ -566,7 +569,8 @@ no_cats:
     print('</form>');
 
     printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_filter_hidden_inputs("range");
+    print_daterange_hidden_inputs();
+    print('<input name="period" type="hidden" value="range">');
     print('<div class="control">');
     print('    <label for="startdate">Start Date</label>');
     printf('   <input id="startdate" name="startdate" type="date" value="%s">', $startdate);
@@ -583,20 +587,15 @@ no_cats:
     print('</div>'); # vbar
     print('</div>'); # sidebar-panel
 }
-function print_filter_hidden_inputs($period) {
-    $view = sgetv($_GET, "view");
-    $p = sgetv($_GET, "p");
-    $tab = sgetv($_GET, "tab");
-    $catid = intval(sgetv($_GET, "catid"));
-    printf('<input name="view" type="hidden" value="%s">', $view);
-    printf('<input name="p" type="hidden" value="%s">', $p);
-    printf('<input name="period" type="hidden" value="%s">', $period);
-    printf('<input name="tab" type="hidden" value="%s">', $tab);
-    printf('<input name="catid" type="hidden" value="%s">', $catid);
+function print_daterange_hidden_inputs() {
+    printf('<input name="view" type="hidden" value="%s">', sgetv($_GET, "view"));
+    printf('<input name="p" type="hidden" value="%s">', sgetv($_GET, "p"));
+    printf('<input name="tab" type="hidden" value="%s">', sgetv($_GET, "tab"));
+    printf('<input name="catid" type="hidden" value="%s">', sgetv($_GET, "catid"));
 }
-function print_querystring_hidden_inputs($qexcept="") {
+function print_tab_hidden_inputs() {
     foreach ($_GET as $k => $v) {
-        if (strequals($qexcept, $k))
+        if (strequals($k, "tab") || strequals($k, "catid"))
             continue;
         printf('<input name="%s" type="hidden" value="%s">', $k, $v);
     }
@@ -805,6 +804,7 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('    <tr>');
     print('        <th>Category</th>');
     print('        <th>Total</th>');
+#    print('        <th></th>');
     print('    </tr>');
 
     for ($i=0; $i < count($cats); $i++) {
@@ -813,6 +813,7 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
         $catidqs = sprintf("catid=%d&tab=exp", $cat["catid"]);
         printf('<td><a href="%s">%s</a></td>', siteurl_get($catidqs), $cat["catname"]);
         printf('<td>%s</td>', number_format($cat["amttotal"], 2));
+#        printf('<td></td>');
         print('</tr>');
     }
 

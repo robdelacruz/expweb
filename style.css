@@ -126,7 +126,7 @@ body {
     display: grid;
     /*grid-template-columns: min-content auto;*/
     /*grid-template-columns: 250px 600px;*/
-    grid-template-columns: 250px 600px;
+    grid-template-columns: 250px auto;
 }
 .mini .maingrid {
     display: grid;
@@ -399,6 +399,7 @@ input[name=year], .gobar input[name=year] {
     flex-grow: 1;
 }
 .categories {
+    margin-left: 1rem;
 }
 .categories td {
     white-space: nowrap;
@@ -412,7 +413,11 @@ input[name=year], .gobar input[name=year] {
     text-align: right;
     max-width: 15ch;
 }
+.categories td:nth-child(3) {
+    width: 100%;
+}
 .expenses {
+    margin-left: 0.25rem;
 }
 .expenses td {
     white-space: nowrap;
@@ -426,7 +431,8 @@ input[name=year], .gobar input[name=year] {
 /* Desc */
 .expenses td:nth-child(2) {
     max-width: 25ch;
-    width: 100%;
+    max-width: 40ch;
+/*    width: 100%;*/
 }
 .mini .expenses td:nth-child(2) {
     max-width: 15ch;
@@ -452,6 +458,8 @@ input[name=year], .gobar input[name=year] {
     color: var(--darkgreen);
     font-size: smaller;
     text-align: center;
+    text-align: left;
+/*    width: 100%;*/
 }
 .expenses tr:hover {
     background-color: var(--mellowyellow);
