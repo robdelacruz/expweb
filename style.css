@@ -59,10 +59,13 @@ a, a:visited {
     color: inherit;
 }
 .bold {
-    font-weight: 700;
+    font-weight: 600;
 }
 .italic {
     font-style: italic;
+}
+.smalltext {
+    font-size: smaller;
 }
 .pill {
     background-color: #ddd;
@@ -138,7 +141,7 @@ body {
 .panel {
     background-color: #fff;
     overflow-x: auto;
-    padding: 0;
+    padding-bottom: 0.5rem;
 /*    margin: 0.5rem 0.5rem 0;*/
 /*    box-shadow: 2px 2px #aaa;*/
 /*    width: fit-content;*/
@@ -396,7 +399,32 @@ input[name=year], .gobar input[name=year] {
     padding: 0;
 }
 .view-panel .panel_body .infobar > *:first-child {
-    flex-grow: 1;
+/*    flex-grow: 1;*/
+}
+.expenses .icon, .categories .icon, .ytd .icon {
+    display: flex;
+    width: 14px;
+}
+.expenses .icon {
+    color: black;
+}
+.categories .icon {
+    color: var(--earthgrey);
+}
+
+.ytd {
+    margin-left: 1rem;
+}
+.ytd td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ytd td:nth-child(1) {
+}
+.ytd td:nth-child(2) {
+    text-align: right;
+    max-width: 15ch;
 }
 .categories {
     margin-left: 1rem;
@@ -412,9 +440,6 @@ input[name=year], .gobar input[name=year] {
 .categories td:nth-child(2) {
     text-align: right;
     max-width: 15ch;
-}
-.categories td:nth-child(3) {
-    width: 100%;
 }
 .expenses {
     margin-left: 0.25rem;

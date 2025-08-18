@@ -532,17 +532,19 @@ no_cats:
     print('<div class="titlebar">Date Range</div>');
     print('<div class="panel_body vbar vsep">');
 
-    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_daterange_hidden_inputs();
-    print('<input name="period" type="hidden" value="month">');
-    print('<div class="control">');
-    print('    <label for="month">Show Month</label>');
-    print('    <div class="gobar">');
-    printf('       <input id="month" name="month" type="month" value="%s">', $month);
-    print('        <input class="go" type="submit" value="Go">');
-    print('    </div>');
-    print('</div>');
-    print('</form>');
+    if (!strequals($tab, "ytd")) {
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+        print_daterange_hidden_inputs();
+        print('<input name="period" type="hidden" value="month">');
+        print('<div class="control">');
+        print('    <label for="month">Show Month</label>');
+        print('    <div class="gobar">');
+        printf('       <input id="month" name="month" type="month" value="%s">', $month);
+        print('        <input class="go" type="submit" value="Go">');
+        print('    </div>');
+        print('</div>');
+        print('</form>');
+    }
 
     printf('<form class="simpleform" action="%s" method="GET">', siteurl());
     print_daterange_hidden_inputs();
@@ -556,33 +558,37 @@ no_cats:
     print('</div>');
     print('</form>');
 
-    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_daterange_hidden_inputs();
-    print('<input name="period" type="hidden" value="day">');
-    print('<div class="control">');
-    print('    <label for="day">Show Day</label>');
-    print('    <div class="gobar">');
-    printf('       <input id="day" name="day" type="date" value="%s">', $day);
-    print('        <input class="go" type="submit" value="Go">');
-    print('    </div>');
-    print('</div>');
-    print('</form>');
+    if (!strequals($tab, "ytd")) {
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+        print_daterange_hidden_inputs();
+        print('<input name="period" type="hidden" value="day">');
+        print('<div class="control">');
+        print('    <label for="day">Show Day</label>');
+        print('    <div class="gobar">');
+        printf('       <input id="day" name="day" type="date" value="%s">', $day);
+        print('        <input class="go" type="submit" value="Go">');
+        print('    </div>');
+        print('</div>');
+        print('</form>');
+    }
 
-    printf('<form class="simpleform" action="%s" method="GET">', siteurl());
-    print_daterange_hidden_inputs();
-    print('<input name="period" type="hidden" value="range">');
-    print('<div class="control">');
-    print('    <label for="startdate">Start Date</label>');
-    printf('   <input id="startdate" name="startdate" type="date" value="%s">', $startdate);
-    print('</div>');
-    print('<div class="control">');
-    print('    <label for="enddate">End Date</label>');
-    printf('   <input id="enddate" name="enddate" type="date" value="%s">', $enddate);
-    print('</div>');
-    print('<div class="btnrow">');
-    print('    <input class="go" type="submit" value="Go">');
-    print('</div>');
-    print('</form>');
+    if (!strequals($tab, "ytd")) {
+        printf('<form class="simpleform" action="%s" method="GET">', siteurl());
+        print_daterange_hidden_inputs();
+        print('<input name="period" type="hidden" value="range">');
+        print('<div class="control">');
+        print('    <label for="startdate">Start Date</label>');
+        printf('   <input id="startdate" name="startdate" type="date" value="%s">', $startdate);
+        print('</div>');
+        print('<div class="control">');
+        print('    <label for="enddate">End Date</label>');
+        printf('   <input id="enddate" name="enddate" type="date" value="%s">', $enddate);
+        print('</div>');
+        print('<div class="btnrow">');
+        print('    <input class="go" type="submit" value="Go">');
+        print('</div>');
+        print('</form>');
+    }
 
     print('</div>'); # vbar
     print('</div>'); # sidebar-panel
@@ -660,13 +666,22 @@ function print_view_panel($db, $user) {
         $range_caption = date("F Y", $startdt);
     }
 
+    $catid = intval(sgetv($_GET, "catid"));
+    if ($catid != 0) {
+        $sql = "SELECT name FROM cat WHERE user_id = ? AND cat_id = ?";
+        $cat = dbquery_one($db, $sql, $user["user_id"], $catid);
+        if ($cat)
+            $range_caption = sprintf("%s - %s", $range_caption, $cat["name"]); 
+    }
+
     if (strequals($tab, "exp"))
         print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption);
     else if (strequals($tab, "cat"))
         print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption);
-    else if (strequals($tab, "ytd"))
-        print_ytd_view_panel($db, $user, $startdt, $enddt, $range_caption);
-    else
+    else if (strequals($tab, "ytd")) {
+        date_to_cal($startdt, $year, $month, $day);
+        print_ytd_view_panel($db, $user, $year);
+    } else
         print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption);
 }
 
@@ -731,7 +746,7 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('        <th>Description</th>');
     print('        <th>Amount</th>');
     print('        <th>Category</th>');
-    print('        <th>Record#</th>');
+    print('        <th></th>');
     print('    </tr>');
 
     for ($i=0; $i < count($xps); $i++) {
@@ -739,11 +754,10 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
         print('<tr>');
         printf('<td>%s</td>', date("Y-m-d", $xp["date"]));
         printf('<td>%s</td>', $xp["desc"]);
-        #printf('<td>%9.2f</td>', $xp["amt"]);
         printf('<td>%s</td>', number_format($xp["amt"], 2));
         printf('<td>%s</td>', $xp["catname"]);
         $editexp_params = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
-        printf('<td><a href="%s">#%d</a></td>', siteurl_get($editexp_params), $xp["exp_id"]);
+        printf('<td><a href="%s"><img class="icon" src="hero-chevron-double-right.svg"></a></td>', siteurl_get($editexp_params));
         print('</tr>');
     }
 
@@ -791,7 +805,7 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('    </div>');
     print('</div>');
 
-    $sql = "SELECT cat.cat_id AS catid, cat.name AS catname, SUM(amt) AS amttotal FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? GROUP BY cat.cat_id ORDER BY amttotal DESC";
+    $sql = "SELECT cat.cat_id AS catid, cat.name AS catname, COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? GROUP BY cat.cat_id ORDER BY amttotal DESC";
     $cats = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
 
     if (count($cats) == 0) {
@@ -804,16 +818,14 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('    <tr>');
     print('        <th>Category</th>');
     print('        <th>Total</th>');
-#    print('        <th></th>');
     print('    </tr>');
 
     for ($i=0; $i < count($cats); $i++) {
         $cat = $cats[$i];
         print('<tr>');
-        $catidqs = sprintf("catid=%d&tab=exp", $cat["catid"]);
-        printf('<td><a href="%s">%s</a></td>', siteurl_get($catidqs), $cat["catname"]);
+        $qs = sprintf("tab=exp&catid=%d", $cat["catid"]);
+        printf('<td><span class="bold">%s</span> <span class="smalltext">(<a href="%s">%d</a>)</span></td>', $cat["catname"], siteurl_get($qs), $cat["numitems"]);
         printf('<td>%s</td>', number_format($cat["amttotal"], 2));
-#        printf('<td></td>');
         print('</tr>');
     }
 
@@ -825,7 +837,68 @@ view_panel_end:
     print('</div>'); # view-panel
 
 }
-function print_ytd_view_panel($db, $user, $startdt, $enddt, $range_caption) {
+
+function print_ytd_view_panel($db, $user, $year) {
+    $startdt = date_from_cal($year, 1, 1);
+    $enddt = date_next_year($startdt);
+    $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?";
+    $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+    $numitems = 0;
+    $amttotal = 0.0;
+    if ($xptotal) {
+        $numitems = $xptotal["numitems"];
+        $amttotal = $xptotal["amttotal"];
+    }
+
+    print('<div class="panel view-panel">');
+
+    print('<div class="titlebar flex-between">');
+    print('    <p>Year Summary</p>');
+    print('</div>');
+
+    print('<div class="panel_body">');
+
+    print('<div class="hbar infobar flex-between">');
+    printf('    <p class="pill dark">%d Year-to-Date</p>', $year);
+    if ($numitems == 1)
+        printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
+    else
+        printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
+    print('</div>');
+
+    print('<table class="ytd">');
+    print('<tbody>');
+    print('    <tr>');
+    print('        <th>Year</th>');
+    print('        <th>Total</th>');
+    print('    </tr>');
+
+    for ($i=1; $i <= 12; $i++) {
+        $startdt = date_from_cal($year, $i, 1);
+        $enddt = date_next_month($startdt);
+        $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?";
+        $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
+        $numitems = 0;
+        $amttotal = 0.0;
+        if ($xptotal) {
+            $numitems = $xptotal["numitems"];
+            $amttotal = $xptotal["amttotal"];
+        }
+        print('<tr>');
+        if ($numitems > 0) {
+            $qs = sprintf("tab=exp&period=month&month=%d-%02d", $year, $i);
+            printf('<td><span class="bold">%s</span> <span class="smalltext">(<a href="%s">%d</a>)</span></td>', date("F", $startdt), siteurl_get($qs), $numitems);
+        } else
+            printf('<td><span class="bold">%s</span></td>', date("F", $startdt));
+        printf('<td>%s</td>', number_format($amttotal, 2));
+        print('</tr>');
+    }
+
+    print('</tbody>');
+    print('</table>');
+
+    print('</div>'); # panel_body
+    print('</div>'); # view-panel
 }
 
 function getv($t, $k) {
