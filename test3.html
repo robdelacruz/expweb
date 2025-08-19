@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html class="1mini">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expense Buddy</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<div class="navbar">
+        <ul class="line-menu">
+            <li class="pill"><a href="/">Expense Buddy</a></li>
+            <li><a href="/">About</a></li>
+        </ul>
+        <ul class="line-menu">
+            <li><a href="/">robdelacruz</a></li>
+            <li><a href="/">logout</a></li>
+        </ul>
+</div>
+<div class="maingrid">
+<div class="panel sidebar-panel">
+    <div class="titlebar">Setup</div>
+    <div class="panel_body vbar vsep">
+        <div class="vbar">
+            <ul class="action-links">
+                <li><a href="/">Import Data</a></li>
+                <li><a href="/">Export Data</a></li>
+                <li><a href="/">Setup Expense Books</a></li>
+                <li><a href="/">Rename Categories</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="titlebar">Setup</div>
+    <div class="panel_body vbar vsep">
+        <form class="simpleform" method="GET" action="/">
+            <div class="control">
+                <label for="tab">Action</label>
+                <div class="gobar">
+                    <select name="tab">
+                        <option value="import">Import Data</option>
+                        <option value="export">Export Data</option>
+                        <option value="books">Setup Expense Books</option>
+                        <option value="cat">Rename Categories</option>
+                    </select>
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel view-panel">
+    <div class="titlebar">
+        <p>&nbsp;</p>
+    </div>
+    <div class="panel_body">
+    </div>
+</div>
+</div>
+</body>
+</html>
+

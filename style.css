@@ -60,10 +60,10 @@ p, ul, li, h1, h2, h3, h4, blockquote {
     padding: 0;
 }
 a, a:visited {
-    color: inherit;
-    color: var(--darkgreen);
-    color: var(--linkgreen);
     text-decoration: none;
+    color: inherit;
+    color: var(--linkgreen);
+    color: var(--darkgreen);
 }
 .bold {
     font-weight: 600;
@@ -406,6 +406,10 @@ input[name=year], .gobar input[name=year] {
 }
 .sidebar-panel .control {
     margin: 0;
+}
+.sidebar-panel a {
+    color: var(--linkgreen);
+    color: var(--darkgreen);
 }
 
 .view-panel {
