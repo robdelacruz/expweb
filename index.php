@@ -192,7 +192,7 @@ function print_welcome_panel() {
     print('    <div class="panel_body">');
     print('        <h2 class="heading">Welcome to Expense Buddy</h2>');
     print('        <p>Expense Buddy Web lets you keep track of your daily expenses.</p>');
-    printf('        <p>To start: <a href="%s">Log in</a> or <a href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
+    printf('        <p>To start: <a class="bold" href="%s">Log in</a> or <a class="bold" href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
     print('    </div>');
     print('</div>');
 }
@@ -705,19 +705,16 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('<div class="panel view-panel">');
 
     print('<div class="titlebar flex-between">');
-    print('    <p>View Expenses</p>');
+    printf('<p>Expenses - %s</p>', $range_caption);
     print('</div>');
 
     print('<div class="panel_body">');
 
     print('<div class="hbar infobar flex-between">');
-    print('    <div class="hbar">');
-    printf('       <p class="pill dark">%s</p>', $range_caption);
-    print('        <form class="gobar">');
-    print('            <input name="search" type="text" placeholder="Search">');
-    print('            <input class="go" type="submit" value="Go">');
-    print('        </form>');
-    print('    </div>');
+    print('    <form class="gobar">');
+    print('        <input name="search" type="text" placeholder="Search">');
+    print('        <input class="go" type="submit" value="Go">');
+    print('    </form>');
     print('    <div class="hbar">');
     if ($numitems == 1)
         printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
@@ -783,19 +780,16 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('<div class="panel view-panel">');
 
     print('<div class="titlebar flex-between">');
-    print('    <p>Categories Summary</p>');
+    printf('<p>Category Totals - %s</p>', $range_caption);
     print('</div>');
 
     print('<div class="panel_body">');
 
     print('<div class="hbar infobar flex-between">');
-    print('    <div class="hbar">');
-    printf('       <p class="pill dark">%s</p>', $range_caption);
-    print('        <form class="gobar">');
-    print('            <input name="search" type="text" placeholder="Search">');
-    print('            <input class="go" type="submit" value="Go">');
-    print('        </form>');
-    print('    </div>');
+    print('    <form class="gobar">');
+    print('        <input name="search" type="text" placeholder="Search">');
+    print('        <input class="go" type="submit" value="Go">');
+    print('    </form>');
     print('    <div class="hbar">');
     if ($numitems == 1)
         printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
@@ -824,7 +818,7 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
         $cat = $cats[$i];
         print('<tr>');
         $qs = sprintf("tab=exp&catid=%d", $cat["catid"]);
-        printf('<td><span class="bold">%s</span> <span class="smalltext">(<a href="%s">%d</a>)</span></td>', $cat["catname"], siteurl_get($qs), $cat["numitems"]);
+        printf('<td><span class="bold">%s</span> <span class="smalltext"><a href="%s">(%d)</a></span></td>', $cat["catname"], siteurl_get($qs), $cat["numitems"]);
         printf('<td>%s</td>', number_format($cat["amttotal"], 2));
         print('</tr>');
     }
@@ -843,33 +837,25 @@ function print_ytd_view_panel($db, $user, $year) {
     $enddt = date_next_year($startdt);
     $sql = "SELECT COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ?";
     $xptotal = dbquery_one($db, $sql, $user["user_id"], $startdt, $enddt);
-    $numitems = 0;
-    $amttotal = 0.0;
+    $year_numitems = 0;
+    $year_amttotal = 0.0;
     if ($xptotal) {
-        $numitems = $xptotal["numitems"];
-        $amttotal = $xptotal["amttotal"];
+        $year_numitems = $xptotal["numitems"];
+        $year_amttotal = $xptotal["amttotal"];
     }
 
     print('<div class="panel view-panel">');
 
     print('<div class="titlebar flex-between">');
-    print('    <p>Year Summary</p>');
+    printf('<p>%d Year-to-Date</p>', $year);
     print('</div>');
 
     print('<div class="panel_body">');
 
-    print('<div class="hbar infobar flex-between">');
-    printf('    <p class="pill dark">%d Year-to-Date</p>', $year);
-    if ($numitems == 1)
-        printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
-    else
-        printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
-    print('</div>');
-
     print('<table class="ytd">');
     print('<tbody>');
     print('    <tr>');
-    print('        <th>Year</th>');
+    printf('       <th>%s</th>', $year);
     print('        <th>Total</th>');
     print('    </tr>');
 
@@ -887,12 +873,17 @@ function print_ytd_view_panel($db, $user, $year) {
         print('<tr>');
         if ($numitems > 0) {
             $qs = sprintf("tab=exp&period=month&month=%d-%02d", $year, $i);
-            printf('<td><span class="bold">%s</span> <span class="smalltext">(<a href="%s">%d</a>)</span></td>', date("F", $startdt), siteurl_get($qs), $numitems);
+            printf('<td><span class="bold">%s</span> <span class="smalltext"><a href="%s">(%d)</a></span></td>', date("F", $startdt), siteurl_get($qs), $numitems);
         } else
             printf('<td><span class="bold">%s</span></td>', date("F", $startdt));
         printf('<td>%s</td>', number_format($amttotal, 2));
         print('</tr>');
     }
+    print('<tr class="total-row">');
+    $qs = sprintf("tab=exp&period=year&year=%d", $year);
+    printf('<td><span class="bold">Total</span> <span class="smalltext"><a href="%s">(%d)</a></span></td>', siteurl_get($qs), $year_numitems);
+    printf('<td>%s</td>', number_format($year_amttotal, 2));
+    print('</tr>');
 
     print('</tbody>');
     print('</table>');

@@ -42,10 +42,14 @@ input[type=number] {
     --fade2: #4a5568;
     --lightgreen: #008800;
     --darkgreen: #005500;
+    --linkgreen: #067031;
     --maroon: #630b08;
     --mellowyellow: #febf2a;
     --lightgrey: #d0ccc0;
     --earthgrey: #686a59;
+    --logoblue: #1d4ed8;
+    --darkerblue: #1e40af;
+    --lighterblue: #60a5fa;
 }
 
 h1, h2, h3, h4 {
@@ -57,6 +61,9 @@ p, ul, li, h1, h2, h3, h4, blockquote {
 }
 a, a:visited {
     color: inherit;
+    color: var(--darkgreen);
+    color: var(--linkgreen);
+    text-decoration: none;
 }
 .bold {
     font-weight: 600;
@@ -173,6 +180,13 @@ th, td {
 tr:nth-child(2n+1) {
     background-color: #eee;
 }
+.total-row {
+}
+.total-row td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    1border-top: 2px solid #777;
+}
 .heading {
     font-size: 1rem;
     font-weight: 500;
@@ -189,6 +203,7 @@ tr:nth-child(2n+1) {
     color: #fff;
 }
 .navbar a {
+    color: #fff;
     text-decoration: none;
 }
 .navbar .pill {
@@ -320,7 +335,7 @@ input[type=password] {
     width: 20ch;
 }
 input[name=search] {
-    max-width: 20ch;
+    max-width: 30ch;
 }
 .mini input[name=search] {
     max-width: 15ch;
@@ -398,21 +413,13 @@ input[name=year], .gobar input[name=year] {
 .view-panel .panel_body {
     padding: 0;
 }
-.view-panel .panel_body .infobar > *:first-child {
-/*    flex-grow: 1;*/
-}
 .expenses .icon, .categories .icon, .ytd .icon {
     display: flex;
     width: 14px;
 }
-.expenses .icon {
-    color: black;
-}
-.categories .icon {
-    color: var(--earthgrey);
-}
 
 .ytd {
+    margin: 1rem;
     margin-left: 1rem;
 }
 .ytd td {
