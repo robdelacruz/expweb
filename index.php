@@ -100,7 +100,7 @@ start_page:
     else if (strequals($p, "register"))
         print_register_panel($errno);
     else if (strequals($p, "welcome") || $user == null)
-        print_welcome_panel();
+        print_welcome_panel($db, $user);
     else if (strequals($p, "addexp"))
         print_addexp_panel($db, $user, $errno);
     else if (strequals($p, "editexp"))
@@ -186,7 +186,10 @@ function print_navbar($user) {
 
     print('</div>');
 }
-function print_welcome_panel() {
+function print_welcome_panel($db, $user) {
+    print('<div class="maingrid">');
+    print_sidebar_panel($db, $user);
+
     print('<div class="panel">');
     print('    <p class="titlebar">Welcome</p>');
     print('    <div class="panel_body">');
@@ -195,6 +198,8 @@ function print_welcome_panel() {
     printf('        <p>To start: <a class="bold" href="%s">Log in</a> or <a class="bold" href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
     print('    </div>');
     print('</div>');
+
+    print('</div>'); # maingrid
 }
 function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');

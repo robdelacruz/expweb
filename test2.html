@@ -115,36 +115,35 @@
         </form>
     </div>
     <div class="titlebar">Setup</div>
-    <div class="panel_body vbar vsep">
-        <div class="vbar">
-            <ul class="action-links">
-                <li><a href="/">Import Data</a></li>
-                <li><a href="/">Export Data</a></li>
-                <li><a href="/">Setup Expense Books</a></li>
-                <li><a href="/">Rename Categories</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="titlebar">Login</div>
-    <div class="panel_body">
-        <form class="simpleform">
-            <h2 class="heading">Login</h2>
+    <div class="panel_body vbar">
+        <form class="simpleform" method="GET" action="/">
             <div class="control">
-                <label for="username">Username</label>
-                <input id="username" name="username" type="text" size="20" value="">
-            </div>
-            <div class="control">
-                <label for="password">Password</label>
-                <input class="invalid" id="password" name="password" type="password" size="20" value="">
-            </div>
-            <p class="error">Invalid username or password</p>
-            <div class="btnrow">
-                <button class="submit" type="submit">Login</button>
-            </div>
-            <div class="control">
-                <p><a href="/">Create New Account</a></p>
+                <label for="setupaction">Action</label>
+                <div class="gobar">
+                    <select name="setupaction">
+                        <option value="import">Import Data</option>
+                        <option value="export">Export Data</option>
+                        <option value="cat">Setup Categories</option>
+                        <option value="cat">Setup Books</option>
+                    </select>
+                    <input class="go" type="submit" value="Go">
+                </div>
             </div>
         </form>
+        <form class="simpleform" method="GET" action="/">
+            <div class="control">
+                <label for="bookid">Select Book</label>
+                <div class="gobar">
+                    <select name="bookid">
+                        <option value="import">Rob's Expenses</option>
+                    </select>
+                    <input class="go" type="submit" value="Go">
+                </div>
+            </div>
+        </form>
+        <ul class="action-links">
+            <li><a href="/">Logout</a></li>
+        </ul>
     </div>
 </div>
 <div class="panel view-panel">
