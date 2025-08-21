@@ -199,6 +199,7 @@ tr:nth-child(2n+1) {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
+    align-items: baseline;
     padding: 0.4rem 0.2rem;
     background-color: var(--darkgreen);
     color: #fff;
@@ -210,6 +211,9 @@ tr:nth-child(2n+1) {
 .navbar .pill {
     background-color: var(--lightgreen);
     color: #fff;
+}
+.navbar .logo {
+    font-size: larger;
 }
 .titlebar {
     display: flex;
@@ -241,9 +245,10 @@ tr:nth-child(2n+1) {
 }
 .line-menu li {
     display: inline;
+    margin-right: 0.5rem;
 }
 .line-menu li:not(:first-child)::before {
-    content: " | ";
+/*    content: " | ";*/
 }
 .line-menu .sel {
 }

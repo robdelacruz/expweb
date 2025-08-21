@@ -193,7 +193,7 @@ function print_foot() {
 function print_navbar($user) {
     print('<div class="navbar">');
     print('  <ul class="line-menu">');
-    printf('    <li><a class="pill" href="%s">Expense Buddy</a></li>', siteurl());
+    printf('    <li><a class="logo pill" href="%s">Expense Buddy</a></li>', siteurl());
     printf('    <li><a href="%s">About</a></li>', siteurl());
     print('  </ul>');
 
