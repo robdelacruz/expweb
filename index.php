@@ -95,20 +95,42 @@ function main() {
 start_page:
     print_head();
     print_navbar($user);
-    if (strequals($p, "login"))
+    if (strequals($p, "login")) {
+        print('<div class="maingrid">');
+        print_login_sidebar();
         print_login_panel($errno);
-    else if (strequals($p, "register"))
+        print('</div>'); # maingrid
+    } else if (strequals($p, "register")) {
+        print('<div class="maingrid">');
+        print_login_sidebar();
         print_register_panel($errno);
-    else if (strequals($p, "welcome") || $user == null)
-        print_welcome_panel($db, $user);
-    else if (strequals($p, "addexp"))
+        print('</div>'); # maingrid
+    } else if (strequals($p, "welcome") || $user == null) {
+        print('<div class="maingrid">');
+        print_login_sidebar();
+        print_login_panel($errno);
+        print('</div>'); # maingrid
+    } else if (strequals($p, "addexp")) {
+        print('<div class="maingrid">');
+        print_view_sidebar($db, $user);
         print_addexp_panel($db, $user, $errno);
-    else if (strequals($p, "editexp"))
+        print('</div>'); # maingrid
+    } else if (strequals($p, "editexp")) {
+        print('<div class="maingrid">');
+        print_view_sidebar($db, $user);
         print_editexp_panel($db, $user, $errno);
-    else if (strequals($p, "viewexp"))
-        print_view_panels($db, $user);
-    else
-        print_view_panels($db, $user);
+        print('</div>'); # maingrid
+    } else if (strequals($p, "viewexp")) {
+        print('<div class="maingrid">');
+        print_view_sidebar($db, $user);
+        print_view_panel($db, $user);
+        print('</div>'); # maingrid
+    } else {
+        print('<div class="maingrid">');
+        print_view_sidebar($db, $user);
+        print_view_panel($db, $user);
+        print('</div>'); # maingrid
+    }
     print_foot();
 }
 
@@ -186,10 +208,12 @@ function print_navbar($user) {
 
     print('</div>');
 }
-function print_welcome_panel($db, $user) {
+function print_welcome_panel() {
     print('<div class="maingrid">');
-    print_sidebar_panel($db, $user);
+    print_login_sidebar();
+    print_login_panel(0);
 
+/*
     print('<div class="panel">');
     print('    <p class="titlebar">Welcome</p>');
     print('    <div class="panel_body">');
@@ -198,6 +222,7 @@ function print_welcome_panel($db, $user) {
     printf('        <p>To start: <a class="bold" href="%s">Log in</a> or <a class="bold" href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
     print('    </div>');
     print('</div>');
+*/
 
     print('</div>'); # maingrid
 }
@@ -431,12 +456,24 @@ function print_editexp_panel($db, $user, $errno=0) {
 
 function print_view_panels($db, $user) {
     print('<div class="maingrid">');
-    print_sidebar_panel($db, $user);
+    print_view_sidebar($db, $user);
     print_view_panel($db, $user);
     print('</div>'); # maingrid
 }
 
-function print_sidebar_panel($db, $user) {
+function print_login_sidebar() {
+    print('<div class="panel sidebar-panel">');
+    print('    <div class="titlebar">Current View</div>');
+    print('    <div class="panel_body vbar">');
+    print('    <ul class="action-links">');
+    print('        <li><a href="/">Login</a></li>');
+    print('        <li><a href="/">Create Account</a></li>');
+    print('    </ul>');
+    print('    </div>'); # panel_body
+    print('</div>'); # sidebar-panel
+}
+
+function print_view_sidebar($db, $user) {
     $tab = sgetv($_GET, "tab");
     if (strequals($tab, ""))
         $tab = "exp";
@@ -600,13 +637,13 @@ no_cats:
 }
 function print_daterange_hidden_inputs() {
     printf('<input name="view" type="hidden" value="%s">', sgetv($_GET, "view"));
-    printf('<input name="p" type="hidden" value="%s">', sgetv($_GET, "p"));
+    printf('<input name="p" type="hidden" value="viewexp">');
     printf('<input name="tab" type="hidden" value="%s">', sgetv($_GET, "tab"));
     printf('<input name="catid" type="hidden" value="%s">', sgetv($_GET, "catid"));
 }
 function print_tab_hidden_inputs() {
     foreach ($_GET as $k => $v) {
-        if (strequals($k, "tab") || strequals($k, "catid"))
+        if (strequals($k, "p") || strequals($k, "tab") || strequals($k, "catid"))
             continue;
         printf('<input name="%s" type="hidden" value="%s">', $k, $v);
     }
