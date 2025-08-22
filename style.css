@@ -204,6 +204,9 @@ tr:nth-child(2n+1) {
     background-color: var(--darkgreen);
     color: #fff;
 }
+.navbar > * {
+    align-self: center;
+}
 .navbar a {
     color: #fff;
     text-decoration: none;
@@ -214,6 +217,9 @@ tr:nth-child(2n+1) {
 }
 .navbar .logo {
     font-size: larger;
+}
+.subnav {
+    1border-bottom: 1px solid var(--lightgrey);
 }
 .titlebar {
     display: flex;
@@ -404,8 +410,7 @@ input[name=year], .gobar input[name=year] {
     border-right: 2px solid var(--earthgrey);
 }
 .sidebar-panel .panel_body {
-    padding: 0.5rem 0;
-    padding: 0;
+    padding: 0.2rem 0;
 }
 .sidebar-panel .panel_body > * {
     padding: 0.2rem 0.5rem 0.5rem;
@@ -423,9 +428,24 @@ input[name=year], .gobar input[name=year] {
 .view-panel .panel_body {
     padding: 0;
 }
+.icon {
+    display: flex;
+    width: 14px;
+}
+.editexp-panel .icon {
+    width: 18px;
+}
 .expenses .icon, .categories .icon, .ytd .icon {
     display: flex;
     width: 14px;
+}
+.navbar .icon {
+    display: flex;
+    width: 18px;
+}
+.iconbar {
+    display: flex;
+    gap: 0.2rem;
 }
 
 .ytd {

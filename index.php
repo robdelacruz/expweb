@@ -192,39 +192,20 @@ function print_foot() {
 
 function print_navbar($user) {
     print('<div class="navbar">');
-    print('  <ul class="line-menu">');
-    printf('    <li><a class="logo pill" href="%s">Expense Buddy</a></li>', siteurl());
-    printf('    <li><a href="%s">About</a></li>', siteurl());
-    print('  </ul>');
+    print('  <div class="hbar">');
+    printf('    <a class="logo pill" href="%s">Expense Buddy</a>', siteurl());
+    print('  </div>');
 
-    print('<ul class="line-menu">');
-    if (!$user) {
-        printf('<li><a href="%s">login</a></li>', siteurl_get("p=login"));
-    } else {
-        printf('<li><a href="%s">%s</a></li>', siteurl_get(), $user["username"]);
-        printf('<li><a href="%s">logout</a></li>', siteurl([], "p=logout"));
+    if ($user) {
+        print('<div class="hbar">');
+        print('    <div class="iconbar">');
+        print('        <img class="icon" src="hero-user-circle.svg">');
+        printf('       <a href="%s">%s</a>', siteurl_get(), $user["username"]);
+        print('    </div>');
+        print('</div>');
     }
-    print('</ul>');
 
     print('</div>');
-}
-function print_welcome_panel() {
-    print('<div class="maingrid">');
-    print_login_sidebar();
-    print_login_panel(0);
-
-/*
-    print('<div class="panel">');
-    print('    <p class="titlebar">Welcome</p>');
-    print('    <div class="panel_body">');
-    print('        <h2 class="heading">Welcome to Expense Buddy</h2>');
-    print('        <p>Expense Buddy Web lets you keep track of your daily expenses.</p>');
-    printf('        <p>To start: <a class="bold" href="%s">Log in</a> or <a class="bold" href="%s">Create a new account</a></p>', siteurl([], "p=login"), siteurl([], "p=register"));
-    print('    </div>');
-    print('</div>');
-*/
-
-    print('</div>'); # maingrid
 }
 function print_login_panel($errno=0) {
     print('<div class="panel login-panel">');
@@ -409,7 +390,10 @@ function print_editexp_panel($db, $user, $errno=0) {
     print('  <div class="panel_body">');
     $editexp_params = sprintf("p=editexp&expid=%d", $expid);
     printf('      <form class="entryform" action="%s" method="POST">', siteurl_get($editexp_params));
-    print('          <h2 class="heading">Edit Expense Details</h2>');
+    print('          <div class="flex-between">');
+    print('              <h2 class="heading">Edit Expense Details</h2>');
+    printf('             <a href="/"><img class="icon" src="hero-trash.svg"></a>');
+    print('          </div>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
     if ($errno == E_DESC_REQUIRED)
@@ -463,11 +447,11 @@ function print_view_panels($db, $user) {
 
 function print_login_sidebar() {
     print('<div class="panel sidebar-panel">');
-    print('    <div class="titlebar">Current View</div>');
+    print('    <div class="titlebar">Welcome</div>');
     print('    <div class="panel_body vbar">');
     print('    <ul class="action-links">');
-    print('        <li><a href="/">Login</a></li>');
-    print('        <li><a href="/">Create Account</a></li>');
+    print('        <li><a href="/?p=login">Login</a></li>');
+    print('        <li><a href="/?p=register">Create Account</a></li>');
     print('    </ul>');
     print('    </div>'); # panel_body
     print('</div>'); # sidebar-panel
@@ -510,6 +494,15 @@ function print_view_sidebar($db, $user) {
     }
 
     print('<div class="panel sidebar-panel">');
+
+    /*
+    print('<div class="titlebar">User</div>');
+    print('<div class="panel_body vbar vsep">');
+    print('    <ul class="action-links">');
+    printf('        <li><a href="/">%s</a></li>', $user["username"]);
+    print('    </ul>');
+    print('</div>');
+     */
 
     print('<div class="titlebar">Current View</div>');
     print('<div class="panel_body vbar vsep">');
@@ -631,8 +624,29 @@ no_cats:
         print('</div>');
         print('</form>');
     }
+    print('</div>');
 
-    print('</div>'); # vbar
+    print('<div class="titlebar">Utilities</div>');
+    print('<div class="panel_body vbar">');
+
+    print('<form class="simpleform" method="GET" action="/">');
+    print('    <div class="control">');
+    print('        <div class="gobar">');
+    print('        <select name="utiltab">');
+    print('            <option value="import">Import Data</option>');
+    print('            <option value="export">Export Data</option>');
+    print('        </select>');
+    print('        <input class="go" type="submit" value="Go">');
+    print('        </div>');
+    print('    </div>');
+    print('</form>');
+
+    print('<ul class="action-links">');
+    print('    <li><a href="/?p=logout">Logout</a></li>');
+    print('</ul>');
+
+    print('</div>'); # Utilities
+
     print('</div>'); # sidebar-panel
 }
 function print_daterange_hidden_inputs() {
@@ -727,6 +741,22 @@ function print_view_panel($db, $user) {
         print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption);
 }
 
+function print_ledger_gobar($user) {
+    if (!$user)
+        return;
+    printf('<form class="simpleform" method="GET" action="%s">', siteurl());
+    print('    <div class="control">');
+    print('        <div class="gobar">');
+    print('        <label for="ledgerid">Ledger:</label>');
+    print('            <select name="ledgerid">');
+    print('            <option value="1">Personal</option>');
+    print('            <option value="2">Company</option>');
+    print('            </select>');
+    print('            <input class="go" type="submit" value="Go">');
+    print('        </div>');
+    print('    </div>');
+    print('</form>');
+}
 function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     $catid = intval(sgetv($_GET, "catid"));
 
@@ -748,6 +778,7 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
 
     print('<div class="titlebar flex-between">');
     printf('<p>Expenses - %s</p>', $range_caption);
+    print_ledger_gobar($user);
     print('</div>');
 
     print('<div class="panel_body">');
@@ -795,8 +826,8 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
         printf('<td>%s</td>', $xp["desc"]);
         printf('<td>%s</td>', number_format($xp["amt"], 2));
         printf('<td>%s</td>', $xp["catname"]);
-        $editexp_params = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
-        printf('<td><a href="%s"><img class="icon" src="hero-chevron-double-right.svg"></a></td>', siteurl_get($editexp_params));
+        $qs = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
+        printf('<td><a href="%s"><img class="icon" src="hero-chevron-double-right.svg"></a></td>', siteurl_get($qs));
         print('</tr>');
     }
 
@@ -823,6 +854,7 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
 
     print('<div class="titlebar flex-between">');
     printf('<p>Category Totals - %s</p>', $range_caption);
+    print_ledger_gobar($user);
     print('</div>');
 
     print('<div class="panel_body">');
@@ -890,6 +922,7 @@ function print_ytd_view_panel($db, $user, $year) {
 
     print('<div class="titlebar flex-between">');
     printf('<p>%d Year-to-Date</p>', $year);
+    print_ledger_gobar($user);
     print('</div>');
 
     print('<div class="panel_body">');
