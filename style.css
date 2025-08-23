@@ -336,7 +336,7 @@ input[name=amt] {
 input[name=cat] {
     width: 20ch;
 }
-input[type=date] {
+input[type=date], input[name=date] {
     width: 16ch;
 }
 
@@ -391,7 +391,8 @@ input[name=year], .gobar input[name=year] {
     border-bottom: 1px solid var(--earthgrey);
 }
 .infobar {
-    padding: 0.4rem 0.4rem;
+    /*padding: 0.4rem 0.4rem;*/
+    margin: 0.4rem 0.4rem;
 }
 
 .login-panel {
@@ -400,7 +401,7 @@ input[name=year], .gobar input[name=year] {
 }
 .editexp-panel {
 }
-.editexp-panel .entryform {
+.editexp-panel .entryform, .delexp-panel .entryform {
     width: fit-content;
 }
 
@@ -464,6 +465,7 @@ input[name=year], .gobar input[name=year] {
     max-width: 15ch;
 }
 .categories {
+    margin: 1rem;
     margin-left: 1rem;
 }
 .categories td {

@@ -77,6 +77,11 @@ function main() {
             header("Location: " . siteurl_get("p=viewexp"));
             return;
         }
+    } else if (strequals($p, "delexp")) {
+        $expid = intval(sgetv($_GET, "expid"));
+        del_exp($db, $user["user_id"], $expid);
+        header("Location: " . siteurl_get("p=viewexp"));
+        return;
     } else {
         // unknown submit
         header("Location: " . siteurl_get());
@@ -84,7 +89,7 @@ function main() {
     }
 
     if (!strequals($cancel, "")) {
-        if (strequals($p, "addexp") || strequals($p, "editexp")) {
+        if (strequals($p, "addexp") || strequals($p, "editexp") || strequals($p, "delexp")) {
             header("Location: " . siteurl_get("p=viewexp"));
             return;
         }
@@ -119,6 +124,11 @@ start_page:
         print('<div class="maingrid">');
         print_view_sidebar($db, $user);
         print_editexp_panel($db, $user, $errno);
+        print('</div>'); # maingrid
+    } else if (strequals($p, "delexp")) {
+        print('<div class="maingrid">');
+        print_view_sidebar($db, $user);
+        print_delexp_panel($db, $user);
         print('</div>'); # maingrid
     } else if (strequals($p, "viewexp")) {
         print('<div class="maingrid">');
@@ -390,10 +400,7 @@ function print_editexp_panel($db, $user, $errno=0) {
     print('  <div class="panel_body">');
     $editexp_params = sprintf("p=editexp&expid=%d", $expid);
     printf('      <form class="entryform" action="%s" method="POST">', siteurl_get($editexp_params));
-    print('          <div class="flex-between">');
-    print('              <h2 class="heading">Edit Expense Details</h2>');
-    printf('             <a href="/"><img class="icon" src="hero-trash.svg"></a>');
-    print('          </div>');
+    print('          <h2 class="heading">Edit Expense Details</h2>');
     print('          <div class="control">');
     print('              <label for="desc">Description</label>');
     if ($errno == E_DESC_REQUIRED)
@@ -437,6 +444,61 @@ function print_editexp_panel($db, $user, $errno=0) {
     print('</div>');
     print('</div>');
 }
+function print_delexp_panel($db, $user) {
+    $expid = intval(sgetv($_GET, "expid"));
+    $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.exp_id = ?"; 
+    $xp = dbquery_one($db, $sql, $user["user_id"], $expid);
+    if (!$xp) {
+        print('<div class="panel delexp-panel">');
+        print('    <div class="titlebar">Delete Expense</div>');
+        print('    <div class="panel_body">');
+        printf('       <form class="simpleform" action="%s" method="POST">', siteurl_get("p=delexp"));
+        print('            <p class="error">(Expense Not Found)</p>');
+        print('            <div class="btnrow">');
+        print('                <button name="cancel" type="submit" value="cancel">OK</button>');
+        print('            </div>');
+        print('        </form>');
+        print('    </div>');
+        print('</div>');
+        return;
+    }
+    $isodate = date("Y-m-d", $xp["date"]);
+
+    print('<div class="panel delexp-panel">');
+    print('  <div class="titlebar">Delete Expense</div>');
+    print('  <div class="panel_body">');
+
+    $qs = sprintf("p=delexp&expid=%d", $expid);
+    printf('<form class="entryform" action="%s" method="POST">', siteurl_get($qs));
+    print('<h2 class="heading">Delete Expense</h2>');
+    print('<div class="vbar">');
+    print('    <div class="control">');
+    print('        <label for="desc">Description</label>');
+    printf('       <input id="desc" name="desc" type="text" value="%s" readonly>', $xp["desc"]);
+    print('    </div>');
+    print('    <div class="control">');
+    print('        <label for="amt">Amount</label>');
+    printf('       <input id="amt" name="amt" type="text" value="%.2f" readonly>', $xp["amt"]);
+    print('    </div>');
+    print('    <div class="control">');
+    print('        <label for="cat">Category</label>');
+    printf('       <input id="cat" name="cat" type="text" value="%s" readonly>', $xp["catname"]);
+    print('    </div>');
+    print('    <div class="control">');
+    print('        <label for="date">Date</label>');
+    printf('       <input id="date" name="date" type="text" value="%s" readonly>', $isodate);
+    print('    </div>');
+    print('</div>');
+    print('<div class="btnrow">');
+    print('    <button class="submit" name="submit" type="submit" value="submit">OK</button>');
+    print('    <button name="cancel" type="submit" value="cancel">Cancel</button>');
+    print('</div>');
+    print('</form>');
+
+    print('</div>');
+    print('</div>');
+}
+
 
 function print_view_panels($db, $user) {
     print('<div class="maingrid">');
@@ -629,12 +691,12 @@ no_cats:
     print('<div class="titlebar">Utilities</div>');
     print('<div class="panel_body vbar">');
 
-    print('<form class="simpleform" method="GET" action="/">');
+    printf('<form class="simpleform" method="GET" action="%s">', siteurl());
     print('    <div class="control">');
     print('        <div class="gobar">');
-    print('        <select name="utiltab">');
-    print('            <option value="import">Import Data</option>');
-    print('            <option value="export">Export Data</option>');
+    print('        <select name="p">');
+    print('            <option value="importdata">Import Data</option>');
+    print('            <option value="exportdata">Export Data</option>');
     print('        </select>');
     print('        <input class="go" type="submit" value="Go">');
     print('        </div>');
@@ -757,7 +819,16 @@ function print_ledger_gobar($user) {
     print('    </div>');
     print('</form>');
 }
+function print_search_hidden_inputs() {
+    foreach ($_GET as $k => $v) {
+        if (strequals($k, "search"))
+            continue;
+        printf('<input name="%s" type="hidden" value="%s">', $k, $v);
+    }
+}
 function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
+    $search = trim(sgetv($_GET, "search"));
+    $dosearch = strlen($search);
     $catid = intval(sgetv($_GET, "catid"));
 
     if ($catid == 0) {
@@ -784,8 +855,9 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('<div class="panel_body">');
 
     print('<div class="hbar infobar flex-between">');
-    print('    <form class="gobar">');
-    print('        <input name="search" type="text" placeholder="Search">');
+    printf('    <form class="gobar" method="GET" action="%s">', siteurl());
+    print_search_hidden_inputs();
+    printf('       <input name="search" type="search" placeholder="Search" value="%s">', $search);
     print('        <input class="go" type="submit" value="Go">');
     print('    </form>');
     print('    <div class="hbar">');
@@ -796,6 +868,10 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     printf('       <a href="%s" class="pill smallpad green box">+</a>', siteurl_get("p=addexp"));
     print('    </div>');
     print('</div>');
+
+    if ($dosearch) {
+       printf('<p class="infobar italic">Searching: %s</p>', $search);
+    }
 
     if ($catid == 0) {
         $sql = "SELECT exp_id, date, desc, amt, cat.name AS catname FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id AND exp.user_id = cat.user_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? ORDER BY date DESC"; 
@@ -817,15 +893,25 @@ function print_exp_view_panel($db, $user, $startdt, $enddt, $range_caption) {
     print('        <th>Amount</th>');
     print('        <th>Category</th>');
     print('        <th></th>');
+    print('        <th></th>');
     print('    </tr>');
 
+    $search = strtolower($search);
     for ($i=0; $i < count($xps); $i++) {
         $xp = $xps[$i];
+        if ($dosearch && 
+            !str_contains(strtolower($xp["desc"]), $search) &&
+            !str_contains(strtolower($xp["catname"]), $search) &&
+            !str_contains(strval($xp["amt"]), $search)) 
+            continue;
+
         print('<tr>');
         printf('<td>%s</td>', date("Y-m-d", $xp["date"]));
         printf('<td>%s</td>', $xp["desc"]);
         printf('<td>%s</td>', number_format($xp["amt"], 2));
         printf('<td>%s</td>', $xp["catname"]);
+        $qs = sprintf("p=delexp&expid=%d", $xp["exp_id"]);
+        printf('<td><a href="%s"><img class="icon" src="hero-x-mark.svg"></a></td>', siteurl_get($qs));
         $qs = sprintf("p=editexp&expid=%d", $xp["exp_id"]);
         printf('<td><a href="%s"><img class="icon" src="hero-chevron-double-right.svg"></a></td>', siteurl_get($qs));
         print('</tr>');
@@ -859,23 +945,8 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
 
     print('<div class="panel_body">');
 
-    print('<div class="hbar infobar flex-between">');
-    print('    <form class="gobar">');
-    print('        <input name="search" type="text" placeholder="Search">');
-    print('        <input class="go" type="submit" value="Go">');
-    print('    </form>');
-    print('    <div class="hbar">');
-    if ($numitems == 1)
-        printf('<p>Total: %s (%d item)</p>', number_format($amttotal, 2), $numitems);
-    else
-        printf('<p>Total: %s (%d items)</p>', number_format($amttotal, 2), $numitems);
-    printf('       <a href="%s" class="pill smallpad green box">+</a>', siteurl_get("p=addexp"));
-    print('    </div>');
-    print('</div>');
-
     $sql = "SELECT cat.cat_id AS catid, cat.name AS catname, COUNT(*) AS numitems, SUM(amt) AS amttotal FROM exp LEFT OUTER JOIN cat ON exp.cat_id = cat.cat_id WHERE exp.user_id = ? AND exp.date >= ? AND exp.date < ? GROUP BY cat.cat_id ORDER BY amttotal DESC";
     $cats = dbquery($db, $sql, $user["user_id"], $startdt, $enddt);
-
     if (count($cats) == 0) {
         print('<p class="infobar italic">(No Expenses)</p>');
         goto view_panel_end;
@@ -896,6 +967,11 @@ function print_cat_view_panel($db, $user, $startdt, $enddt, $range_caption) {
         printf('<td>%s</td>', number_format($cat["amttotal"], 2));
         print('</tr>');
     }
+    print('<tr class="total-row">');
+    $qs = sprintf("tab=exp&catid=0");
+    printf('<td><span class="bold">Total</span> <span class="smalltext"><a href="%s">(%d)</a></span></td>', siteurl_get("tab=exp&catid=0"), $numitems);
+    printf('<td>%s</td>', number_format($amttotal, 2));
+    print('</tr>');
 
     print('</tbody>');
     print('</table>');
@@ -1140,6 +1216,11 @@ function add_exp($db, $userid, $desc, $samt, $catname, $date) {
 
     $sql = "INSERT INTO exp (date, desc, amt, cat_id, user_id) VALUES (?, ?, ?, ?, ?)";
     $expid = dbinsert($db, $sql, $dt, $desc, $amt, $catid, $userid);
+    return 0;
+}
+function del_exp($db, $userid, $expid) {
+    $sql = "DELETE FROM exp WHERE user_id = ? AND exp_id = ?";
+    dbupdate($db, $sql, $userid, $expid);
     return 0;
 }
 function edit_exp($db, $userid, $expid, $desc, $samt, $catname, $date) {
