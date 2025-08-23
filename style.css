@@ -386,8 +386,8 @@ input[name=year], .gobar input[name=year] {
 .vbar {
     display: grid;
 }
-/*.vsep > *:not(:last-child) {*/
-.vsep > * {
+.vsep > *:not(:last-child) {
+/*.vsep > * {*/
     border-bottom: 1px solid var(--earthgrey);
 }
 .infobar {
